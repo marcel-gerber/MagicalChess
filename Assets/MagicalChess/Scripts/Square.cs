@@ -33,4 +33,8 @@ public class Square {
         byte index = (byte) ((s[0] - 'a') + ((s[1] - '1') * 8));
         this.value = (SquareValue) index;
     }
+
+    public byte GetIndex() {
+        return (byte) value;
+    }
 }

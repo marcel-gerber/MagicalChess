@@ -9,4 +9,20 @@ public class Pgn {
     public Pgn() {
         
     }
+
+    public Dictionary<String, String> GetMetadata() {
+        return metadata;
+    }
+    
+    public void SetMetadata(Dictionary<String, String> data) {
+        this.metadata = data;
+    }
+
+    public Move[] GetMoves() {
+        return moves;
+    }
+
+    public void SetMoves(Move[] moveArray) {
+        this.moves = moveArray;
+    }
 }
