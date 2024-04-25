@@ -7,4 +7,12 @@
         this.from = from;
         this.to = to;
     }
+
+    public Square GetFrom() {
+        return from;
+    }
+
+    public Square GetTo() {
+        return to;
+    }
 }
