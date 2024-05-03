@@ -16,6 +16,9 @@ public class Square {
     
     private SquareValue value;
     
+    // Valid chars of Squares in Chess Notation
+    private static char[] validChars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+    
     public Square(SquareValue squareValue) {
         this.value = squareValue;
     }
@@ -36,5 +39,9 @@ public class Square {
 
     public byte GetIndex() {
         return (byte) value;
+    }
+
+    public char[] GetValidChars() {
+        return validChars;
     }
 }
