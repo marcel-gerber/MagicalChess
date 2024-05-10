@@ -14,31 +14,55 @@ public enum SquareValue : byte {
 
 public class Square {
     
-    private SquareValue value;
+    private SquareValue _value;
     
     // Valid chars of Squares in Chess Notation
     private static char[] validChars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
     
     public Square(SquareValue squareValue) {
-        this.value = squareValue;
+        this._value = squareValue;
     }
 
     public Square(byte index) {
-        this.value = (SquareValue) index;
+        if (index > 63) {
+            this._value = SquareValue.NONE;
+            return;
+        }
+        
+        this._value = (SquareValue) index;
     }
 
     public Square(String s) {
         if (s == "-") {
-            this.value = SquareValue.NONE;
+            this._value = SquareValue.NONE;
             return;
         }
 
         byte index = (byte) ((s[0] - 'a') + ((s[1] - '1') * 8));
-        this.value = (SquareValue) index;
+        this._value = (SquareValue) index;
+    }
+
+    public static Square operator+(Square square, Direction direction) {
+        byte targetIndex = (byte) (square.GetIndex() + direction.GetValue());
+        Square targetSquare = new Square(targetIndex);
+
+        if (Math.Abs(square.GetFileIndex() - targetSquare.GetFileIndex()) > 2) {
+            return new Square(SquareValue.NONE);
+        }
+
+        return targetSquare;
     }
 
     public byte GetIndex() {
-        return (byte) value;
+        return (byte) _value;
+    }
+
+    public int GetFileIndex() {
+        return GetIndex() & 7;
+    }
+
+    public int GetRankIndex() {
+        return GetIndex() >> 3;
     }
 
     public char[] GetValidChars() {
