@@ -53,6 +53,10 @@ public class Square {
         return targetSquare;
     }
 
+    public SquareValue GetValue() {
+        return _value;
+    }
+
     public byte GetIndex() {
         return (byte) _value;
     }

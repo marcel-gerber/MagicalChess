@@ -14,10 +14,7 @@ public class Parser {
     }
 
     public static Parser Instance() {
-        if (_instance == null) {
-            return new Parser();
-        }
-        return _instance;
+        return _instance ?? new Parser();
     }
 
     public Pgn Parse(String file) {
