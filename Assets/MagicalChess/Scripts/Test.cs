@@ -10,10 +10,7 @@ public class Test : MonoBehaviour {
         /*Parser parser = Parser.Instance();
         Pgn pgn = parser.Parse(Path.GetFullPath("Assets/MagicalChess/Pgn/game.pgn"));*/
 
-        Square square = new Square(SquareValue.B5);
-        Square target = square + Direction.WEST;
-        
-        Debug.Log(target.GetIndex());
+        Board board = new Board();
     }
 
     // Update is called once per frame
