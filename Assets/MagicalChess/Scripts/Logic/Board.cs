@@ -6,6 +6,8 @@
     public Board() {
         _pieces = new Piece[64];
         _castling = new Castling();
+        
+        Init();
     }
 
     public Piece GetPiece(byte index) {
@@ -69,7 +71,7 @@
         PlacePiece(6, new Knight(Color.WHITE));
         PlacePiece(7, new Rook(Color.WHITE));
 
-        for (byte b = 8; b < 15; b++) {
+        for (byte b = 8; b <= 15; b++) {
             PlacePiece(b, new Pawn(Color.WHITE));
         }
         
@@ -83,7 +85,7 @@
         PlacePiece(62, new Knight(Color.BLACK));
         PlacePiece(63, new Rook(Color.BLACK));
         
-        for (byte b = 48; b < 55; b++) {
+        for (byte b = 48; b <= 55; b++) {
             PlacePiece(b, new Pawn(Color.BLACK));
         }
     }
