@@ -1,13 +1,16 @@
-﻿public class Board {
+﻿using System;
+
+public class Board {
 
     private Piece[] _pieces;
     private Castling _castling;
+    private Color _sideToMove;
+    private Square _enPassantSquare;
 
     public Board() {
         _pieces = new Piece[64];
         _castling = new Castling();
-        
-        Init();
+        _sideToMove = Color.WHITE;
     }
 
     public Piece GetPiece(byte index) {
@@ -22,11 +25,19 @@
         return _castling;
     }
 
-    public void PlacePiece(byte index, Piece piece) {
+    public Color GetSideToMove() {
+        return _sideToMove;
+    }
+
+    public Square GetEnPassantSquare() {
+        return _enPassantSquare;
+    }
+
+    private void PlacePiece(byte index, Piece piece) {
         _pieces[index] = piece;
     }
     
-    public void RemovePiece(byte index) {
+    private void RemovePiece(byte index) {
         _pieces[index] = NullPiece.Instance();
     }
 
@@ -60,7 +71,61 @@
         return targetPiece is NullPiece || targetPiece.GetColor() != piece.GetColor();
     }
 
-    private void Init() {
+    public void SetFen(String fen) {
+        String[] split = fen.Split(' ');
+        String pieces = split[0];
+        String sideToMove = split.Length > 1 ? split[1] : "w";
+        String castling = split.Length > 2 ? split[2] : "-";
+        String enPassant = split.Length > 3 ? split[3] : "-";
+
+        _sideToMove = sideToMove == "w" ? Color.WHITE : Color.BLACK;
+        _enPassantSquare = new Square(enPassant);
+
+        byte index = 56;
+        foreach (char c in pieces) {
+            Piece piece = Piece.FromChar(c);
+
+            if (!(piece is NullPiece)) {
+                PlacePiece(index, piece);
+                index++;
+                continue;
+            }
+
+            if (c == '/') {
+                index -= 16;
+                continue;
+            }
+
+            if (Char.IsDigit(c)) {
+                index += (byte) (c - '0');
+            }
+        }
+        
+        if(castling == "-") return;
+
+        foreach (char c in castling) {
+            if (c == 'K') {
+                _castling.Set(CastlingValue.WHITE_00);
+                continue;
+            }
+            
+            if (c == 'Q') {
+                _castling.Set(CastlingValue.WHITE_000);
+                continue;
+            }
+            
+            if (c == 'k') {
+                _castling.Set(CastlingValue.BLACK_00);
+                continue;
+            }
+            
+            if (c == 'q') {
+                _castling.Set(CastlingValue.BLACK_000);
+            }
+        }
+    }
+
+    public void Init() {
         // Weiße Figuren
         PlacePiece(0, new Rook(Color.WHITE));
         PlacePiece(1, new Knight(Color.WHITE));
@@ -88,6 +153,11 @@
         for (byte b = 48; b <= 55; b++) {
             PlacePiece(b, new Pawn(Color.BLACK));
         }
+        
+        _castling.Set(CastlingValue.WHITE_00);
+        _castling.Set(CastlingValue.WHITE_000);
+        _castling.Set(CastlingValue.BLACK_00);
+        _castling.Set(CastlingValue.BLACK_000);
     }
 
 }

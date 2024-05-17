@@ -20,7 +20,7 @@ public class Castling {
     private static readonly byte[] White000EmptySquares = { 1, 2, 3 };
 
     public Castling() {
-        _castlingRights = 15; // jedes bit ist gesetzt
+        _castlingRights = (byte) CastlingValue.NO_CASTLING;
     }
 
     public void Set(CastlingValue value) {

@@ -9,6 +9,7 @@ public enum Direction : sbyte {
     NORTH_WEST = 7,
     SOUTH_WEST = -9,
     SOUTH_EAST = -7,
+    NONE = 0,
     
     // Knight Directions
     KNIGHT_NORTH_NORTH_WEST = 15,
