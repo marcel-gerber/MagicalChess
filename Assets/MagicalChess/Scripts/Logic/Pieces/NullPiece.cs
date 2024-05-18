@@ -17,4 +17,7 @@ public class NullPiece : Piece {
         return EmptyList;
     }
     
+    public override char GetChar() {
+        return ' ';
+    }
 }

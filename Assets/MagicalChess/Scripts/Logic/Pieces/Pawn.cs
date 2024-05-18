@@ -33,6 +33,11 @@ public class Pawn : Piece {
         foreach (Direction attack in GetAttackDirections(color)) {
             to = from + attack;
 
+            if (to.GetIndex() == board.GetEnPassantSquare().GetIndex()) {
+                pseudoLegalMoves.Add(new Move(MoveType.ENPASSANT, from, to));
+                continue;
+            }
+
             if (board.IsOpponent(to, board.GetPiece(to))) {
                 if (IsOnPromotionRank(color, to)) {
                     GetPromotionMoves(ref pseudoLegalMoves, from, to);
@@ -43,9 +48,11 @@ public class Pawn : Piece {
             }
         }
         
-        // TODO: En Passant
-        
         return pseudoLegalMoves;
+    }
+
+    public override char GetChar() {
+        return GetColor() == Color.WHITE ? 'P' : 'p';
     }
 
     private static void GetPromotionMoves(ref List<Move> moves, Square from, Square to) {

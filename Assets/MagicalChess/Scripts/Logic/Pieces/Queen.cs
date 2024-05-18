@@ -12,4 +12,8 @@ public class Queen : Piece {
 
         return pseudoLegalMoves;
     }
+    
+    public override char GetChar() {
+        return GetColor() == Color.WHITE ? 'Q' : 'q';
+    }
 }

@@ -10,6 +10,8 @@ public abstract class Piece {
     
     public abstract List<Move> GetPseudoLegalMoves(Board board, Square from);
 
+    public abstract char GetChar();
+
     private void AddDirectionMoves(ref List<Move> moves, Direction direction, Board board, Square from) {
         Square to = from + direction;
         

@@ -38,4 +38,8 @@ public class King : Piece {
         
         return pseudoLegalMoves;
     }
+    
+    public override char GetChar() {
+        return GetColor() == Color.WHITE ? 'K' : 'k';
+    }
 }

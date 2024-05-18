@@ -25,4 +25,7 @@ public class Knight : Piece {
         return pseudoLegalMoves;
     }
     
+    public override char GetChar() {
+        return GetColor() == Color.WHITE ? 'N' : 'n';
+    }
 }

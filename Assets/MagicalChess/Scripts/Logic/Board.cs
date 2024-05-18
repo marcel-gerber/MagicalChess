@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using UnityEngine;
 
 public class Board {
 
@@ -11,6 +13,8 @@ public class Board {
         _pieces = new Piece[64];
         _castling = new Castling();
         _sideToMove = Color.WHITE;
+        
+        Init();
     }
 
     public Piece GetPiece(byte index) {
@@ -83,14 +87,6 @@ public class Board {
 
         byte index = 56;
         foreach (char c in pieces) {
-            Piece piece = Piece.FromChar(c);
-
-            if (!(piece is NullPiece)) {
-                PlacePiece(index, piece);
-                index++;
-                continue;
-            }
-
             if (c == '/') {
                 index -= 16;
                 continue;
@@ -98,7 +94,12 @@ public class Board {
 
             if (Char.IsDigit(c)) {
                 index += (byte) (c - '0');
+                continue;
             }
+            
+            Piece piece = Piece.FromChar(c);
+            PlacePiece(index, piece);
+            index++;
         }
         
         if(castling == "-") return;
@@ -125,39 +126,30 @@ public class Board {
         }
     }
 
-    public void Init() {
-        // Weiße Figuren
-        PlacePiece(0, new Rook(Color.WHITE));
-        PlacePiece(1, new Knight(Color.WHITE));
-        PlacePiece(2, new Bishop(Color.WHITE));
-        PlacePiece(3, new Queen(Color.WHITE));
-        PlacePiece(4, new King(Color.WHITE));
-        PlacePiece(5, new Bishop(Color.WHITE));
-        PlacePiece(6, new Knight(Color.WHITE));
-        PlacePiece(7, new Rook(Color.WHITE));
+    public void Print() {
+        StringBuilder stringBuilder = new StringBuilder("\n---------------------------------\n");
+        byte index = 56;
 
-        for (byte b = 8; b <= 15; b++) {
-            PlacePiece(b, new Pawn(Color.WHITE));
+        for (byte i = 0; i < 8; i++) {
+            for (byte j = 0; j < 8; j++) {
+                stringBuilder.Append("| ");
+                stringBuilder.Append(GetPiece(index).GetChar());
+                stringBuilder.Append(" ");
+
+                index++;
+            }
+
+            stringBuilder.Append("|\n");
+            stringBuilder.Append("---------------------------------\n");
+            index -= 16;
         }
-        
-        // Schwarze Figuren
-        PlacePiece(56, new Rook(Color.BLACK));
-        PlacePiece(57, new Knight(Color.BLACK));
-        PlacePiece(58, new Bishop(Color.BLACK));
-        PlacePiece(59, new Queen(Color.BLACK));
-        PlacePiece(60, new King(Color.BLACK));
-        PlacePiece(61, new Bishop(Color.BLACK));
-        PlacePiece(62, new Knight(Color.BLACK));
-        PlacePiece(63, new Rook(Color.BLACK));
-        
-        for (byte b = 48; b <= 55; b++) {
-            PlacePiece(b, new Pawn(Color.BLACK));
+        Debug.Log(stringBuilder.ToString());
+    }
+
+    private void Init() {
+        for (byte i = 0; i < 64; i++) {
+            _pieces[i] = NullPiece.Instance();
         }
-        
-        _castling.Set(CastlingValue.WHITE_00);
-        _castling.Set(CastlingValue.WHITE_000);
-        _castling.Set(CastlingValue.BLACK_00);
-        _castling.Set(CastlingValue.BLACK_000);
     }
 
 }

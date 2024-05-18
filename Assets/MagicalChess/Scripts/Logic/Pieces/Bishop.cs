@@ -9,4 +9,8 @@ public class Bishop : Piece {
     public override List<Move> GetPseudoLegalMoves(Board board, Square from) {
         return base.GetPseudoBishopMoves(board, from);
     }
+
+    public override char GetChar() {
+        return GetColor() == Color.WHITE ? 'B' : 'b';
+    }
 }
