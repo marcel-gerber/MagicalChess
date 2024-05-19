@@ -31,11 +31,33 @@ public class Castling {
         _castlingRights &= (byte) ~((byte) value);
     }
 
+    public void UnSet(Color color) {
+        switch (color) {
+            case Color.WHITE:
+                UnSet(CastlingValue.WHITE_00);
+                UnSet(CastlingValue.WHITE_000);
+                return;
+            case Color.BLACK:
+                UnSet(CastlingValue.BLACK_00);
+                UnSet(CastlingValue.BLACK_000);
+                return;
+            default:
+                return;
+        }
+    }
+
     public bool Has(CastlingValue value) {
         return (_castlingRights & (byte) value) == (byte) value;
     }
 
-    public CastlingValue[] GetCastlings(Color color) {
+    public bool Has(Color color) {
+        foreach (CastlingValue castlingValue in GetCastlings(color)) {
+            if (Has(castlingValue)) return true;
+        }
+        return false;
+    }
+
+    public static CastlingValue[] GetCastlings(Color color) {
         switch (color) {
             case Color.BLACK:
                 return BlackCastlings;
@@ -46,7 +68,7 @@ public class Castling {
         }
     }
 
-    public byte GetKingIndex(CastlingValue castlingValue) {
+    public static byte GetKingIndex(CastlingValue castlingValue) {
         switch (castlingValue) {
             case CastlingValue.BLACK_00:
                 return 62;
@@ -61,8 +83,24 @@ public class Castling {
         }
     }
 
+    // Gibt die Rochade auf Basis des Start-Feldes des Turms zurück
+    public static CastlingValue GetRookFromIndex(byte index) {
+        switch(index) {
+            case 0:
+                return CastlingValue.WHITE_000;
+            case 7:
+                return CastlingValue.WHITE_00;
+            case 56:
+                return CastlingValue.BLACK_000;
+            case 63:
+                return CastlingValue.BLACK_00;
+            default:
+                return CastlingValue.NO_CASTLING;
+        }
+    }
+
     // Diese Felder müssen leer sein, um rochieren zu dürfen
-    public byte[] GetEmptySquares(CastlingValue castlingValue) {
+    public static byte[] GetEmptySquares(CastlingValue castlingValue) {
         switch (castlingValue) {
             case CastlingValue.BLACK_00:
                 return Black00EmptySquares;

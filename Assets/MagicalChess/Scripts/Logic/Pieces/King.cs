@@ -21,15 +21,15 @@ public class King : Piece {
             }
         }
 
-        CastlingValue[] castlings = board.GetCastling().GetCastlings(this.GetColor());
+        CastlingValue[] castlings = Castling.GetCastlings(this.GetColor());
 
         foreach (CastlingValue castlingValue in castlings) {
             if (board.GetCastling().Has(castlingValue)) {
-                byte[] emptySquares = board.GetCastling().GetEmptySquares(castlingValue);
+                byte[] emptySquares = Castling.GetEmptySquares(castlingValue);
                 
                 if(!board.AreEmpty(emptySquares)) continue;
                 
-                byte targetKindIndex = board.GetCastling().GetKingIndex(castlingValue);
+                byte targetKindIndex = Castling.GetKingIndex(castlingValue);
                 Square targetSquare = new Square(targetKindIndex);
                 
                 pseudoLegalMoves.Add(new Move(MoveType.CASTLING, from, targetSquare));

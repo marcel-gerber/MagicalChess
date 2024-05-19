@@ -57,6 +57,10 @@ public class Square {
         return _value;
     }
 
+    public void SetValue(SquareValue squareValue) {
+        _value = squareValue;
+    }
+
     public byte GetIndex() {
         return (byte) _value;
     }

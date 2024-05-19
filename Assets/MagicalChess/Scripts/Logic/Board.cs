@@ -1,18 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+public class StateInfo {
+
+    private readonly Castling _castling;
+    private readonly Square _enPassantSquare;
+    private readonly Piece _captured;
+
+    public StateInfo(Castling castling, Square enPassantSquare, Piece captured) {
+        _castling = castling;
+        _enPassantSquare = enPassantSquare;
+        _captured = captured;
+    }
+
+    public Castling GetCastling() {
+        return _castling;
+    }
+
+    public Square GetEnPassantSquare() {
+        return _enPassantSquare;
+    }
+
+    public Piece GetCaptured() {
+        return _captured;
+    }
+}
+
 public class Board {
 
-    private Piece[] _pieces;
-    private Castling _castling;
+    private readonly Piece[] _pieces;
+    private readonly Castling _castling;
     private Color _sideToMove;
     private Square _enPassantSquare;
+
+    private readonly Stack<StateInfo> _prevStates;
 
     public Board() {
         _pieces = new Piece[64];
         _castling = new Castling();
         _sideToMove = Color.WHITE;
+        _prevStates = new Stack<StateInfo>();
         
         Init();
     }
@@ -73,6 +102,68 @@ public class Board {
     public bool IsEmptyOrOpponent(Square square, Piece piece) {
         Piece targetPiece = GetPiece(square);
         return targetPiece is NullPiece || targetPiece.GetColor() != piece.GetColor();
+    }
+
+    private bool IsEnPassantPossible(Square to, Piece piece) {
+        Piece neighborEast = GetPiece(to + Direction.EAST);
+        Piece neighborWest = GetPiece(to + Direction.WEST);
+
+        return (neighborEast is Pawn && neighborEast.GetColor() != piece.GetColor()) || 
+               (neighborWest is Pawn && neighborWest.GetColor() != piece.GetColor());
+    }
+
+    public void MakeMove(Move move) {
+        Square from = move.GetFrom();
+        Square to = move.GetTo();
+        MoveType moveType = move.GetMoveType();
+
+        Piece moved = GetPiece(from);
+        Piece captured = GetPiece(to);
+
+        StateInfo stateInfo = new StateInfo(_castling, _enPassantSquare, captured);
+        _prevStates.Push(stateInfo);
+
+        if (_enPassantSquare.GetValue() != SquareValue.NONE) {
+            _enPassantSquare.SetValue(SquareValue.NONE);
+        }
+
+        if (!(captured is NullPiece)) {
+            RemovePiece(to.GetIndex());
+
+            if (captured is Rook) {
+                CastlingValue castlingValue = Castling.GetRookFromIndex(to.GetIndex());
+                _castling.UnSet(castlingValue);
+            }
+        }
+
+        if (_castling.Has(_sideToMove)) {
+            if (moved is King) {
+                _castling.UnSet(_sideToMove);
+            }
+            else if(moved is Rook) {
+                CastlingValue castlingValue = Castling.GetRookFromIndex(from.GetIndex());
+                _castling.UnSet(castlingValue);
+            }
+        }
+
+        if (moved is Pawn) {
+            // Double push
+            if (Math.Abs(from.GetIndex() - to.GetIndex()) == 16) {
+                if (IsEnPassantPossible(to, moved)) {
+                    int enPassantIndex = to.GetIndex() ^ 8;
+                    _enPassantSquare = new Square((byte) enPassantIndex);
+                }
+            }
+        }
+
+        // TODO
+        if (moveType == MoveType.CASTLING) {
+            
+        }
+    }
+
+    public void UnmakeMove(Move move) {
+        StateInfo stateInfo = _prevStates.Pop();
     }
 
     public void SetFen(String fen) {
