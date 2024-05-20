@@ -29,7 +29,7 @@ public class King : Piece {
                 
                 if(!board.AreEmpty(emptySquares)) continue;
                 
-                byte targetKindIndex = Castling.GetKingIndex(castlingValue);
+                byte targetKindIndex = Castling.GetEndingKingIndex(castlingValue);
                 Square targetSquare = new Square(targetKindIndex);
                 
                 pseudoLegalMoves.Add(new Move(MoveType.CASTLING, from, targetSquare));

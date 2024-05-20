@@ -31,7 +31,7 @@ public class StateInfo {
 public class Board {
 
     private readonly Piece[] _pieces;
-    private readonly Castling _castling;
+    private Castling _castling;
     private Color _sideToMove;
     private Square _enPassantSquare;
 
@@ -131,7 +131,7 @@ public class Board {
             RemovePiece(to.GetIndex());
 
             if (captured is Rook) {
-                CastlingValue castlingValue = Castling.GetRookFromIndex(to.GetIndex());
+                CastlingValue castlingValue = Castling.GetFromRookIndex(to.GetIndex());
                 _castling.UnSet(castlingValue);
             }
         }
@@ -141,7 +141,7 @@ public class Board {
                 _castling.UnSet(_sideToMove);
             }
             else if(moved is Rook) {
-                CastlingValue castlingValue = Castling.GetRookFromIndex(from.GetIndex());
+                CastlingValue castlingValue = Castling.GetFromRookIndex(from.GetIndex());
                 _castling.UnSet(castlingValue);
             }
         }
@@ -156,14 +156,100 @@ public class Board {
             }
         }
 
-        // TODO
         if (moveType == MoveType.CASTLING) {
+            CastlingValue castlingValue = Castling.GetFromKingIndex(to.GetIndex());
+            byte startingRookIndex = Castling.GetStartingRookIndex(castlingValue);
+            byte endingRookIndex = Castling.GetEndingRookIndex(castlingValue);
+
+            Piece rook = GetPiece(startingRookIndex);
             
+            // Turm und König entfernen
+            RemovePiece(startingRookIndex);
+            RemovePiece(from.GetIndex());
+            
+            // Turm und König an neue Position platzieren
+            PlacePiece(endingRookIndex, rook);
+            PlacePiece(to.GetIndex(), moved);
         }
+        else if(moveType == MoveType.PROMOTION) {
+            PromotionType promotionType = move.GetPromotionType();
+            Piece promotionPiece = promotionType.GetPiece(_sideToMove);
+            
+            RemovePiece(from.GetIndex());
+            PlacePiece(to.GetIndex(), promotionPiece);
+        }
+        else {
+            RemovePiece(from.GetIndex());
+            PlacePiece(to.GetIndex(), moved);
+        }
+
+        if (moveType == MoveType.ENPASSANT) {
+            int enPassantIndex = to.GetIndex() ^ 8;
+            RemovePiece((byte) enPassantIndex);
+        }
+
+        _sideToMove = _sideToMove.GetOpposite();
     }
 
     public void UnmakeMove(Move move) {
         StateInfo stateInfo = _prevStates.Pop();
+
+        _castling = stateInfo.GetCastling();
+        _enPassantSquare = stateInfo.GetEnPassantSquare();
+        Piece captured = stateInfo.GetCaptured();
+
+        _sideToMove = _sideToMove.GetOpposite();
+
+        Square from = move.GetFrom();
+        Square to = move.GetTo();
+        MoveType moveType = move.GetMoveType();
+
+        if (moveType == MoveType.CASTLING) {
+            CastlingValue castlingValue = Castling.GetFromKingIndex(to.GetIndex());
+            byte startingRookIndex = Castling.GetStartingRookIndex(castlingValue);
+            byte endingRookIndex = Castling.GetEndingRookIndex(castlingValue);
+
+            Piece rook = GetPiece(endingRookIndex);
+            Piece king = GetPiece(to.GetIndex());
+            
+            // Turm und König entfernen
+            RemovePiece(endingRookIndex);
+            RemovePiece(to.GetIndex());
+            
+            // Turm und König an alte Position platzieren
+            PlacePiece(startingRookIndex, rook);
+            PlacePiece(from.GetIndex(), king);
+            
+            return;
+        }
+
+        if (moveType == MoveType.PROMOTION) {
+            Pawn pawn = new Pawn(_sideToMove);
+            
+            RemovePiece(to.GetIndex());
+            PlacePiece(from.GetIndex(), pawn);
+
+            if (!(captured is NullPiece)) {
+                PlacePiece(to.GetIndex(), captured);
+            }
+            return;
+        }
+
+        Piece moved = GetPiece(to.GetIndex());
+        RemovePiece(to.GetIndex());
+        PlacePiece(from.GetIndex(), moved);
+
+        if (moveType == MoveType.ENPASSANT) {
+            Pawn pawn = new Pawn(_sideToMove.GetOpposite());
+            int pawnIndex = _enPassantSquare.GetIndex() ^ 8;
+            
+            PlacePiece((byte) pawnIndex, pawn);
+            return;
+        }
+
+        if (!(captured is NullPiece)) {
+            PlacePiece(to.GetIndex(), captured);
+        }
     }
 
     public void SetFen(String fen) {

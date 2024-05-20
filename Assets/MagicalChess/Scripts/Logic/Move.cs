@@ -12,6 +12,24 @@ public enum PromotionType : byte {
     QUEEN
 }
 
+public static class PromotionTypeExtension {
+
+    public static Piece GetPiece(this PromotionType promotionType, Color color) {
+        switch (promotionType) {
+            case PromotionType.KNIGHT:
+                return new Knight(color);
+            case PromotionType.BISHOP:
+                return new Bishop(color);
+            case PromotionType.ROOK:
+                return new Rook(color);
+            case PromotionType.QUEEN:
+                return new Queen(color);
+            default:
+                return NullPiece.Instance();
+        }
+    }
+}
+
 public class Move {
 
     private readonly MoveType _moveType;
@@ -42,5 +60,9 @@ public class Move {
 
     public MoveType GetMoveType() {
         return _moveType;
+    }
+
+    public PromotionType GetPromotionType() {
+        return _promotionType;
     }
 }

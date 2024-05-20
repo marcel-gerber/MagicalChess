@@ -67,8 +67,9 @@ public class Castling {
                 return null;
         }
     }
-
-    public static byte GetKingIndex(CastlingValue castlingValue) {
+    
+    // Das Feld, wo sich der König während der Rochade hinbewegt 
+    public static byte GetEndingKingIndex(CastlingValue castlingValue) {
         switch (castlingValue) {
             case CastlingValue.BLACK_00:
                 return 62;
@@ -82,9 +83,55 @@ public class Castling {
                 return 255;
         }
     }
+    
+    public static byte GetStartingRookIndex(CastlingValue castling) {
+        switch(castling) {
+            case CastlingValue.WHITE_00:
+                return 7;
+            case CastlingValue.WHITE_000:
+                return 0;
+            case CastlingValue.BLACK_00:
+                return 63;
+            case CastlingValue.BLACK_000:
+                return 56;
+            default:
+                return 255;
+        }
+    }
+    
+    public static byte GetEndingRookIndex(CastlingValue castling) {
+        switch(castling) {
+            case CastlingValue.WHITE_00:
+                return 5;
+            case CastlingValue.WHITE_000:
+                return 3;
+            case CastlingValue.BLACK_00:
+                return 61;
+            case CastlingValue.BLACK_000:
+                return 59;
+            default:
+                return 255;
+        }
+    }
+    
+    // Gibt die Rochade auf Basis des Feldes, auf dem der König landet, wenn er die Rochade gespielt hat, zurück
+    public static CastlingValue GetFromKingIndex(byte index) {
+        switch(index) {
+            case 2:
+                return CastlingValue.WHITE_000;
+            case 6:
+                return CastlingValue.WHITE_00;
+            case 58:
+                return CastlingValue.BLACK_000;
+            case 62:
+                return CastlingValue.BLACK_00;
+            default:
+                return CastlingValue.NO_CASTLING;
+        }
+    }
 
     // Gibt die Rochade auf Basis des Start-Feldes des Turms zurück
-    public static CastlingValue GetRookFromIndex(byte index) {
+    public static CastlingValue GetFromRookIndex(byte index) {
         switch(index) {
             case 0:
                 return CastlingValue.WHITE_000;
