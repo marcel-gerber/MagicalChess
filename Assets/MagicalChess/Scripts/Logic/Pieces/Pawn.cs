@@ -32,6 +32,8 @@ public class Pawn : Piece {
 
         foreach (Direction attack in GetAttackDirections(color)) {
             to = from + attack;
+            
+            if(to.GetValue() == SquareValue.NONE) continue;
 
             if (to.GetIndex() == board.GetEnPassantSquare().GetIndex()) {
                 pseudoLegalMoves.Add(new Move(MoveType.ENPASSANT, from, to));
@@ -65,9 +67,9 @@ public class Pawn : Piece {
     private static bool IsOnDoublePushRank(Color color, Square from) {
         switch (color) {
             case Color.WHITE:
-                return from.GetRankIndex() == 2;
+                return from.GetRankIndex() == 1;
             case Color.BLACK:
-                return from.GetRankIndex() == 7;
+                return from.GetRankIndex() == 6;
             default:
                 return false;
         }
@@ -76,9 +78,9 @@ public class Pawn : Piece {
     private static bool IsOnPromotionRank(Color color, Square to) {
         switch (color) {
             case Color.WHITE:
-                return to.GetRankIndex() == 8;
+                return to.GetRankIndex() == 7;
             case Color.BLACK:
-                return to.GetRankIndex() == 1;
+                return to.GetRankIndex() == 0;
             default:
                 return false;
         }

@@ -17,6 +17,8 @@ public class Knight : Piece {
         
         foreach (Direction direction in LegalDirections) {
             Square to = from + direction;
+            
+            if(to.GetValue() == SquareValue.NONE) continue;
 
             if (board.IsEmptyOrOpponent(to, this)) {
                 pseudoLegalMoves.Add(new Move(from, to));

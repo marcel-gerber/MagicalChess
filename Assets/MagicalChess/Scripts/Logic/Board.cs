@@ -54,6 +54,13 @@ public class Board {
         return GetPiece(square.GetIndex());
     }
 
+    public Piece GetPieceOrNullPiece(Square square) {
+        if (square.GetValue() == SquareValue.NONE) {
+            return NullPiece.Instance();
+        }
+        return GetPiece(square.GetIndex());
+    }
+
     public Castling GetCastling() {
         return _castling;
     }
@@ -105,8 +112,8 @@ public class Board {
     }
 
     private bool IsEnPassantPossible(Square to, Piece piece) {
-        Piece neighborEast = GetPiece(to + Direction.EAST);
-        Piece neighborWest = GetPiece(to + Direction.WEST);
+        Piece neighborEast = GetPieceOrNullPiece(to + Direction.EAST);
+        Piece neighborWest = GetPieceOrNullPiece(to + Direction.WEST);
 
         return (neighborEast is Pawn && neighborEast.GetColor() != piece.GetColor()) || 
                (neighborWest is Pawn && neighborWest.GetColor() != piece.GetColor());
@@ -250,6 +257,19 @@ public class Board {
         if (!(captured is NullPiece)) {
             PlacePiece(to.GetIndex(), captured);
         }
+    }
+
+    public List<Move> GetPseudoLegalMoves() {
+        List<Move> pseudoLegalMoves = new List<Move>();
+        
+        for (byte index = 0; index < 64; index++) {
+            Piece piece = GetPiece(index);
+            if(piece.GetColor() != _sideToMove) continue;
+            
+            pseudoLegalMoves.AddRange(piece.GetPseudoLegalMoves(this, new Square(index)));
+        }
+
+        return pseudoLegalMoves;
     }
 
     public void SetFen(String fen) {
