@@ -61,6 +61,17 @@ public class Board {
         return GetPiece(square.GetIndex());
     }
 
+    private Square GetKingSquare(Color color) {
+        for (byte index = 0; index < 64; index++) {
+            Piece piece = GetPiece(index);
+            
+            if (piece is King && piece.GetColor() == color) {
+                return new Square(index);
+            }
+        }
+        return new Square(SquareValue.NONE);
+    }
+
     public Castling GetCastling() {
         return _castling;
     }
@@ -95,6 +106,10 @@ public class Board {
         }
 
         return true;
+    }
+
+    public bool IsKing(Square square) {
+        return GetPiece(square) is King;
     }
 
     public bool IsFriendly(Square square, Piece piece) {
@@ -259,6 +274,27 @@ public class Board {
         }
     }
 
+    public List<Square> GetAttackedSquares() {
+        List<Square> attackedSquares = new List<Square>();
+        
+        for (byte index = 0; index < 64; index++) {
+            Piece piece = GetPiece(index);
+            if(piece.GetColor() != _sideToMove) continue;
+            
+            attackedSquares.AddRange(piece.GetAttackedSquares(this, new Square(index)));
+        }
+        return attackedSquares;
+    }
+
+    public bool IsCheck() {
+        Square kingSquare = GetKingSquare(_sideToMove.GetOpposite());
+
+        foreach (Square attacked in GetAttackedSquares()) {
+            if (kingSquare.GetValue() == attacked.GetValue()) return true;
+        }
+        return false;
+    }
+
     public List<Move> GetPseudoLegalMoves() {
         List<Move> pseudoLegalMoves = new List<Move>();
         
@@ -268,7 +304,6 @@ public class Board {
             
             pseudoLegalMoves.AddRange(piece.GetPseudoLegalMoves(this, new Square(index)));
         }
-
         return pseudoLegalMoves;
     }
 

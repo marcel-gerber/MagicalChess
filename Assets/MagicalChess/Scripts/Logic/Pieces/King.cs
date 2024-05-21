@@ -40,7 +40,22 @@ public class King : Piece {
         
         return pseudoLegalMoves;
     }
-    
+
+    public override List<Square> GetAttackedSquares(Board board, Square from) {
+        List<Square> attackedSquares = new List<Square>();
+        
+        foreach (Direction direction in LegalDirections) {
+            Square to = from + direction;
+            
+            if(to.GetValue() == SquareValue.NONE) continue;
+
+            if (board.IsEmptyOrOpponent(to, this)) {
+                attackedSquares.Add(to);
+            }
+        }
+        return attackedSquares;
+    }
+
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'K' : 'k';
     }

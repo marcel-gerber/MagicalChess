@@ -2,7 +2,8 @@
 
 public class NullPiece : Piece {
 
-    private static readonly List<Move> EmptyList = new List<Move>();
+    private static readonly List<Move> EmptyMoveList = new List<Move>();
+    private static readonly List<Square> EmptySquareList = new List<Square>();
     private static NullPiece _instance;
 
     private NullPiece() : base(Color.NONE) {
@@ -14,9 +15,13 @@ public class NullPiece : Piece {
     }
     
     public override List<Move> GetPseudoLegalMoves(Board board, Square from) {
-        return EmptyList;
+        return EmptyMoveList;
     }
-    
+
+    public override List<Square> GetAttackedSquares(Board board, Square from) {
+        return EmptySquareList;
+    }
+
     public override char GetChar() {
         return ' ';
     }

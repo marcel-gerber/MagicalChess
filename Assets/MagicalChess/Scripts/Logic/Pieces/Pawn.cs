@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Pawn : Piece {
 
@@ -22,12 +23,15 @@ public class Pawn : Piece {
             }
             else {
                 pseudoLegalMoves.Add(new Move(from, to));
-            }
-        }
+                
+                if (IsOnDoublePushRank(color, from)) {
+                    to = from + push + push;
 
-        if (IsOnDoublePushRank(color, from)) {
-            to = from + push + push;
-            pseudoLegalMoves.Add(new Move(from, to));
+                    if (board.IsEmpty(to)) {
+                        pseudoLegalMoves.Add(new Move(from, to));
+                    }
+                }
+            }
         }
 
         foreach (Direction attack in GetAttackDirections(color)) {
@@ -40,7 +44,7 @@ public class Pawn : Piece {
                 continue;
             }
 
-            if (board.IsOpponent(to, board.GetPiece(to))) {
+            if (board.IsOpponent(to, this) && !board.IsKing(to)) {
                 if (IsOnPromotionRank(color, to)) {
                     GetPromotionMoves(ref pseudoLegalMoves, from, to);
                 }
@@ -51,6 +55,21 @@ public class Pawn : Piece {
         }
         
         return pseudoLegalMoves;
+    }
+
+    public override List<Square> GetAttackedSquares(Board board, Square from) {
+        List<Square> attackedSquares = new List<Square>();
+        
+        foreach (Direction attack in GetAttackDirections(GetColor())) {
+            Square to = from + attack;
+            
+            if(to.GetValue() == SquareValue.NONE) continue;
+
+            if (board.IsOpponent(to, this)) {
+                attackedSquares.Add(to);
+            }
+        }
+        return attackedSquares;
     }
 
     public override char GetChar() {
