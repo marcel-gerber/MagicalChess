@@ -1,3 +1,5 @@
+using Chess;
+
 public enum CastlingValue : byte {
     NO_CASTLING = 0,
     WHITE_00 = 0b00000001,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Chess;
 
 public class Queen : Piece {
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UnityEngine;
+using Chess;
 
 public class StateInfo {
 
@@ -423,11 +423,6 @@ public class Board {
         }
 
         return stringBuilder.ToString();
-    }
-
-
-    public void Print() {
-        Debug.Log(String());
     }
     
     private void Init() {

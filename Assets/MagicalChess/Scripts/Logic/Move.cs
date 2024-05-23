@@ -1,4 +1,6 @@
-﻿public enum MoveType : byte {
+﻿using Chess;
+
+public enum MoveType : byte {
     NORMAL,
     PROMOTION,
     ENPASSANT,

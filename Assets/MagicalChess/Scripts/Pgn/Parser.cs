@@ -224,12 +224,12 @@ public class Parser {
     private Move GetCastling(String move) {
         switch (move) {
             case "O-O":
-                if (_board.GetSideToMove() == Color.WHITE) {
+                if (_board.GetSideToMove() == Chess.Color.WHITE) {
                     return new Move(MoveType.CASTLING, new Square(SquareValue.E1), new Square(SquareValue.G1));
                 }
                 return new Move(MoveType.CASTLING, new Square(SquareValue.E8), new Square(SquareValue.G8));
             case "O-O-O":
-                if (_board.GetSideToMove() == Color.WHITE) {
+                if (_board.GetSideToMove() == Chess.Color.WHITE) {
                     return new Move(MoveType.CASTLING, new Square(SquareValue.E1), new Square(SquareValue.C1));
                 }
                 return new Move(MoveType.CASTLING, new Square(SquareValue.E8), new Square(SquareValue.C8));
