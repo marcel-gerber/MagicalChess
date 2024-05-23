@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Perft {
 
     private Board _board;
-    private int _checks;
+    private int _debug;
 
     public Perft(Board board) {
         _board = board;
-        _checks = 0;
+        _debug = 0;
     }
 
     private int perft(int depth) {
@@ -20,12 +21,15 @@ public class Perft {
         List<Move> legalMoves = _board.GetPseudoLegalMoves();
         
         foreach (Move move in legalMoves) {
+            String str = _board.String();
             _board.MakeMove(move);
 
-            if (_board.IsCheck()) {
-                _checks++;
-            }
-            else {
+            if (!_board.IsCheck()) {
+                if (move.GetMoveType() == MoveType.CASTLING) {
+                    Debug.Log(str);
+                    Debug.Log(move.GetFrom().GetValue() + " " + move.GetTo().GetValue());
+                }
+                
                 nodes += perft(depth - 1);
             }
             
@@ -38,7 +42,7 @@ public class Perft {
     public void Run(int depth) {
         int nodes = perft(depth);
         Debug.Log("Nodes: " + nodes);
-        Debug.Log("Checks: " + _checks);
+        Debug.Log("Debug: " + _debug);
     }
 
 }

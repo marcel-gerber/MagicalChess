@@ -142,7 +142,10 @@ public class Board {
         Piece moved = GetPiece(from);
         Piece captured = GetPiece(to);
 
-        StateInfo stateInfo = new StateInfo(_castling, _enPassantSquare, captured);
+        Castling castling = new Castling(_castling);
+        Square enPassantSquare = new Square(_enPassantSquare);
+        
+        StateInfo stateInfo = new StateInfo(castling, enPassantSquare, captured);
         _prevStates.Push(stateInfo);
 
         if (_enPassantSquare.GetValue() != SquareValue.NONE) {
@@ -357,8 +360,8 @@ public class Board {
             }
         }
     }
-
-    public void Print() {
+    
+    public String String() {
         StringBuilder stringBuilder = new StringBuilder("\n---------------------------------\n");
         byte index = 56;
 
@@ -375,9 +378,15 @@ public class Board {
             stringBuilder.Append("---------------------------------\n");
             index -= 16;
         }
-        Debug.Log(stringBuilder.ToString());
+
+        return stringBuilder.ToString();
     }
 
+
+    public void Print() {
+        Debug.Log(String());
+    }
+    
     private void Init() {
         for (byte i = 0; i < 64; i++) {
             _pieces[i] = NullPiece.Instance();

@@ -13,7 +13,7 @@ public class Castling {
     private static readonly CastlingValue[] BlackCastlings = { CastlingValue.BLACK_00, CastlingValue.BLACK_000 };
     private static readonly CastlingValue[] WhiteCastlings = { CastlingValue.WHITE_00, CastlingValue.WHITE_000 };
 
-    private static readonly byte[] Black00EmptySquares = { 62, 61 };
+    private static readonly byte[] Black00EmptySquares = { 61, 62 };
     private static readonly byte[] Black000EmptySquares = { 57, 58, 59 };
     
     private static readonly byte[] White00EmptySquares = { 5, 6 };
@@ -21,6 +21,15 @@ public class Castling {
 
     public Castling() {
         _castlingRights = (byte) CastlingValue.NO_CASTLING;
+    }
+
+    // Copy constructor
+    public Castling(Castling castling) {
+        _castlingRights = castling.GetValue();
+    }
+
+    public byte GetValue() {
+        return _castlingRights;
     }
 
     public void Set(CastlingValue value) {

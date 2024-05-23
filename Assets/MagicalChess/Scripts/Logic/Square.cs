@@ -18,6 +18,11 @@ public class Square {
     
     // Valid chars of Squares in Chess Notation
     private static char[] validChars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+
+    // Copy constructor
+    public Square(Square square) {
+        _value = square.GetValue();
+    }
     
     public Square(SquareValue squareValue) {
         this._value = squareValue;
