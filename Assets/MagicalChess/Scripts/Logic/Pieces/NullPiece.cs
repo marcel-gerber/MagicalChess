@@ -25,4 +25,8 @@ public class NullPiece : Piece {
     public override char GetChar() {
         return ' ';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.NONE;
+    }
 }

@@ -1,6 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
+public enum PieceType : byte {
+    PAWN,
+    KNIGHT,
+    BISHOP,
+    ROOK,
+    QUEEN,
+    KING,
+    NONE
+}
+
 public abstract class Piece {
     
     private readonly Color _color;
@@ -14,6 +24,8 @@ public abstract class Piece {
     public abstract List<Square> GetAttackedSquares(Board board, Square from);
 
     public abstract char GetChar();
+
+    public abstract PieceType GetPieceType();
 
     private void GetAttackRay(ref List<Square> squares, Direction direction, Board board, Square from, Func<Square, bool> kingCheck) {
         Square to = from + direction;

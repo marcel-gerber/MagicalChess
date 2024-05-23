@@ -29,4 +29,8 @@ public class Queen : Piece {
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'Q' : 'q';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.QUEEN;
+    }
 }

@@ -24,4 +24,8 @@ public class Bishop : Piece {
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'B' : 'b';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.BISHOP;
+    }
 }

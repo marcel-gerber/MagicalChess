@@ -45,4 +45,8 @@ public class Knight : Piece {
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'N' : 'n';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.KNIGHT;
+    }
 }

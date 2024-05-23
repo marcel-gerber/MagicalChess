@@ -5,24 +5,17 @@
     CASTLING
 }
 
-public enum PromotionType : byte {
-    KNIGHT,
-    BISHOP,
-    ROOK,
-    QUEEN
-}
+public static class PieceTypeExtension {
 
-public static class PromotionTypeExtension {
-
-    public static Piece GetPiece(this PromotionType promotionType, Color color) {
-        switch (promotionType) {
-            case PromotionType.KNIGHT:
+    public static Piece GetPiece(this PieceType pieceType, Color color) {
+        switch (pieceType) {
+            case PieceType.KNIGHT:
                 return new Knight(color);
-            case PromotionType.BISHOP:
+            case PieceType.BISHOP:
                 return new Bishop(color);
-            case PromotionType.ROOK:
+            case PieceType.ROOK:
                 return new Rook(color);
-            case PromotionType.QUEEN:
+            case PieceType.QUEEN:
                 return new Queen(color);
             default:
                 return NullPiece.Instance();
@@ -35,7 +28,7 @@ public class Move {
     private readonly MoveType _moveType;
     private readonly Square _from;
     private readonly Square _to;
-    private readonly PromotionType _promotionType;
+    private readonly PieceType _pieceType;
 
     public Move(Square from, Square to) {
         this._moveType = MoveType.NORMAL;
@@ -43,11 +36,11 @@ public class Move {
         this._to = to;
     }
     
-    public Move(MoveType moveType, Square from, Square to, PromotionType promotionType = PromotionType.KNIGHT) {
+    public Move(MoveType moveType, Square from, Square to, PieceType pieceType = PieceType.KNIGHT) {
         this._moveType = moveType;
         this._from = from;
         this._to = to;
-        this._promotionType = promotionType;
+        this._pieceType = pieceType;
     }
 
     public Square GetFrom() {
@@ -62,7 +55,7 @@ public class Move {
         return _moveType;
     }
 
-    public PromotionType GetPromotionType() {
-        return _promotionType;
+    public PieceType GetPromotionType() {
+        return _pieceType;
     }
 }

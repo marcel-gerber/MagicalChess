@@ -23,4 +23,8 @@ public class Rook : Piece {
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'R' : 'r';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.ROOK;
+    }
 }

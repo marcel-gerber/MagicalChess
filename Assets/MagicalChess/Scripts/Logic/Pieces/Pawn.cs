@@ -76,11 +76,15 @@ public class Pawn : Piece {
         return GetColor() == Color.WHITE ? 'P' : 'p';
     }
 
+    public override PieceType GetPieceType() {
+        return PieceType.PAWN;
+    }
+
     private static void GetPromotionMoves(ref List<Move> moves, Square from, Square to) {
-        moves.Add(new Move(MoveType.PROMOTION, from, to, PromotionType.KNIGHT));
-        moves.Add(new Move(MoveType.PROMOTION, from, to, PromotionType.BISHOP));
-        moves.Add(new Move(MoveType.PROMOTION, from, to, PromotionType.ROOK));
-        moves.Add(new Move(MoveType.PROMOTION, from, to, PromotionType.QUEEN));
+        moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.KNIGHT));
+        moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.BISHOP));
+        moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.ROOK));
+        moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.QUEEN));
     }
 
     private static bool IsOnDoublePushRank(Color color, Square from) {

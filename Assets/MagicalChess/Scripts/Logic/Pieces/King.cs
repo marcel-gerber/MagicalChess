@@ -59,4 +59,8 @@ public class King : Piece {
     public override char GetChar() {
         return GetColor() == Color.WHITE ? 'K' : 'k';
     }
+
+    public override PieceType GetPieceType() {
+        return PieceType.KING;
+    }
 }

@@ -197,7 +197,7 @@ public class Board {
             PlacePiece(to.GetIndex(), moved);
         }
         else if(moveType == MoveType.PROMOTION) {
-            PromotionType promotionType = move.GetPromotionType();
+            PieceType promotionType = move.GetPromotionType();
             Piece promotionPiece = promotionType.GetPiece(_sideToMove);
             
             RemovePiece(from.GetIndex());
@@ -309,6 +309,49 @@ public class Board {
         }
         return pseudoLegalMoves;
     }
+    
+    public List<Move> GetPseudoLegalMoves(PieceType pieceType) {
+        List<Move> pseudoLegalMoves = new List<Move>();
+        
+        for (byte index = 0; index < 64; index++) {
+            Piece piece = GetPiece(index);
+            if(!(piece.GetPieceType() == pieceType && piece.GetColor() == _sideToMove)) continue;
+            
+            pseudoLegalMoves.AddRange(piece.GetPseudoLegalMoves(this, new Square(index)));
+        }
+        return pseudoLegalMoves;
+    }
+
+    public List<Move> GetLegalMoves() {
+        List<Move> pseudoLegalMoves = GetPseudoLegalMoves();
+        List<Move> legalMoves = new List<Move>();
+
+        foreach (Move move in pseudoLegalMoves) {
+            MakeMove(move);
+            if (!IsCheck()) {
+                legalMoves.Add(move);
+            }
+            UnmakeMove(move);
+        }
+
+        return legalMoves;
+    }
+    
+    public List<Move> GetLegalMoves(PieceType pieceType) {
+        List<Move> pseudoLegalMoves = GetPseudoLegalMoves(pieceType);
+        List<Move> legalMoves = new List<Move>();
+
+        foreach (Move move in pseudoLegalMoves) {
+            MakeMove(move);
+            if (!IsCheck()) {
+                legalMoves.Add(move);
+            }
+            UnmakeMove(move);
+        }
+
+        return legalMoves;
+    }
+
 
     public void SetFen(String fen) {
         String[] split = fen.Split(' ');
