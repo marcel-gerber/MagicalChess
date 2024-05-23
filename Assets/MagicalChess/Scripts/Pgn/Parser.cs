@@ -18,6 +18,12 @@ public class Parser {
     public static Parser Instance() {
         return _instance ?? new Parser();
     }
+    
+    private String RemoveCurlyBracesContent(String input) {
+        String pattern = @"\{.*?\}";
+        String result = Regex.Replace(input, pattern, "").Trim();
+        return result;
+    }
 
     public Pgn Parse(String file) {
         if (!File.Exists(file)) {
@@ -49,10 +55,20 @@ public class Parser {
             String[] moveSplit = Regex.Split(line, @"\d+\.");
             moveSplit = moveSplit.Where(s => !String.IsNullOrWhiteSpace(s)).ToArray();
 
-            foreach (String sMoves in moveSplit) {
+            for (int i = 0; i < moveSplit.Length; i++) {
+                String sMoves = moveSplit[i];
+                
+                if (sMoves.Contains("{")) {
+                    sMoves = RemoveCurlyBracesContent(sMoves);
+                }
+                
                 String[] moveString = sMoves.Split(' ');
 
                 foreach (String sMove in moveString) {
+                    if(String.IsNullOrEmpty(sMove)) continue;
+                    
+                    if(sMove.StartsWith("{")) continue;
+                    
                     if (!IsCastling(sMove) && IsResult(sMove)) {
                         pgn.SetMetadata(metadata);
                         return pgn;
@@ -99,7 +115,11 @@ public class Parser {
         if (sMove.Length == 3) {
             // Pawn move with additional information -> fe6
             if (Char.IsLower(sMove[0])) {
-                
+                char additional = sMove[0];
+                Square to = new Square(sMove.Substring(1));
+                Square from = GetFromByToWithAdditionalInfo(PieceType.PAWN, to, additional);
+
+                return new Move(from, to);
             }
 
             // Normal move -> Nc3
@@ -132,6 +152,15 @@ public class Parser {
                     return new Move(from, to);
                 }
             }
+
+            // Move that gives check -> Bg6+
+            if (sMove[3] == '+') {
+                Piece piece = Piece.FromChar(sMove[0]);
+                Square to = new Square(sMove.Substring(1, 2));
+                
+                Square from = GetFromByTo(piece.GetPieceType(), to);
+                return new Move(from, to);
+            }
             
             // Normal move with additional information -> Ngf6
             Piece pieceFromChar = Piece.FromChar(sMove[0]);
@@ -141,8 +170,8 @@ public class Parser {
             Square fromTwo = GetFromByToWithAdditionalInfo(pieceFromChar.GetPieceType(), toSquare, additionalInfoTwo);
             return new Move(fromTwo, toSquare);
         }
-        
-        return null;
+
+        throw new Exception("Unknown Move: " + sMove);
     }
 
     private Square GetFromByTo(PieceType pieceType, Square to) {
