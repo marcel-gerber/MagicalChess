@@ -12,6 +12,24 @@ public enum PieceType : byte {
     NONE
 }
 
+public static class PieceTypeExtension {
+
+    public static Piece GetPiece(this PieceType pieceType, Color color) {
+        switch (pieceType) {
+            case PieceType.KNIGHT:
+                return new Knight(color);
+            case PieceType.BISHOP:
+                return new Bishop(color);
+            case PieceType.ROOK:
+                return new Rook(color);
+            case PieceType.QUEEN:
+                return new Queen(color);
+            default:
+                return NullPiece.Instance();
+        }
+    }
+}
+
 public abstract class Piece {
     
     private readonly Color _color;

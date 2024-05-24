@@ -10,6 +10,11 @@ public class Test : MonoBehaviour {
         Parser parser = Parser.Instance();
         Pgn pgn = parser.Parse(Path.GetFullPath("Assets/MagicalChess/Pgn/game.pgn"));
 
+        Move move;
+        while ((move = pgn.GetNextMove()) != null) {
+            Debug.Log(move.GetFrom().GetValue() + " " + move.GetTo().GetValue());
+        }
+
         // Board board = new Board();
         // board.SetFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         // board.SetFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0");

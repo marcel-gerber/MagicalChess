@@ -1,28 +1,8 @@
-﻿using Chess;
-
-public enum MoveType : byte {
+﻿public enum MoveType : byte {
     NORMAL,
     PROMOTION,
     ENPASSANT,
     CASTLING
-}
-
-public static class PieceTypeExtension {
-
-    public static Piece GetPiece(this PieceType pieceType, Color color) {
-        switch (pieceType) {
-            case PieceType.KNIGHT:
-                return new Knight(color);
-            case PieceType.BISHOP:
-                return new Bishop(color);
-            case PieceType.ROOK:
-                return new Rook(color);
-            case PieceType.QUEEN:
-                return new Queen(color);
-            default:
-                return NullPiece.Instance();
-        }
-    }
 }
 
 public class Move {
@@ -30,19 +10,20 @@ public class Move {
     private readonly MoveType _moveType;
     private readonly Square _from;
     private readonly Square _to;
-    private readonly PieceType _pieceType;
+    private readonly PieceType _promotion;
 
     public Move(Square from, Square to) {
-        this._moveType = MoveType.NORMAL;
-        this._from = from;
-        this._to = to;
+        _moveType = MoveType.NORMAL;
+        _from = from;
+        _to = to;
+        _promotion = PieceType.NONE;
     }
     
-    public Move(MoveType moveType, Square from, Square to, PieceType pieceType = PieceType.KNIGHT) {
-        this._moveType = moveType;
-        this._from = from;
-        this._to = to;
-        this._pieceType = pieceType;
+    public Move(MoveType moveType, Square from, Square to, PieceType promotion = PieceType.KNIGHT) {
+        _moveType = moveType;
+        _from = from;
+        _to = to;
+        _promotion = promotion;
     }
 
     public Square GetFrom() {
@@ -58,6 +39,6 @@ public class Move {
     }
 
     public PieceType GetPromotionType() {
-        return _pieceType;
+        return _promotion;
     }
 }

@@ -15,9 +15,6 @@ public enum SquareValue : byte {
 public class Square {
     
     private SquareValue _value;
-    
-    // Valid chars of Squares in Chess Notation
-    private static char[] validChars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
     // Copy constructor
     public Square(Square square) {
@@ -25,26 +22,26 @@ public class Square {
     }
     
     public Square(SquareValue squareValue) {
-        this._value = squareValue;
+        _value = squareValue;
     }
 
     public Square(byte index) {
         if (index > 63) {
-            this._value = SquareValue.NONE;
+            _value = SquareValue.NONE;
             return;
         }
         
-        this._value = (SquareValue) index;
+        _value = (SquareValue) index;
     }
 
     public Square(String s) {
         if (s == "-") {
-            this._value = SquareValue.NONE;
+            _value = SquareValue.NONE;
             return;
         }
 
         byte index = (byte) ((s[0] - 'a') + ((s[1] - '1') * 8));
-        this._value = (SquareValue) index;
+        _value = (SquareValue) index;
     }
 
     public static Square operator+(Square square, Direction direction) {
@@ -122,9 +119,5 @@ public class Square {
 
     public int GetRankIndex() {
         return GetIndex() >> 3;
-    }
-
-    public char[] GetValidChars() {
-        return validChars;
     }
 }

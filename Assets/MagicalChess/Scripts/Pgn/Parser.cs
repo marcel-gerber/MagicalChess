@@ -32,7 +32,6 @@ public class Parser {
         }
 
         Pgn pgn = new Pgn();
-        Dictionary<String, String> metadata = new Dictionary<string, string>();
 
         String[] lines = File.ReadAllLines(file);
         foreach (String line in lines) {
@@ -45,8 +44,7 @@ public class Parser {
                 value = value.Substring(0, value.Length - 1);
                 value = value.Replace("\"", "");
 
-                metadata[key] = value;
-                
+                pgn.AddMetaData(key, value);
                 continue;
             }
             
@@ -68,34 +66,19 @@ public class Parser {
                     if(String.IsNullOrEmpty(sMove)) continue;
                     
                     if(sMove.StartsWith("{")) continue;
-                    
+
                     if (!IsCastling(sMove) && IsResult(sMove)) {
-                        pgn.SetMetadata(metadata);
                         return pgn;
                     }
 
                     Move move = ParseMove(sMove);
                     if (move != null) {
-                        Debug.Log(move.GetFrom().GetValue() + " " + move.GetTo().GetValue());
+                        pgn.AddMove(move);
                         _board.MakeMove(move);
                     }
                 }
             }
         }
-        
-        pgn.SetMetadata(metadata);
-        return pgn;
-    }
-
-    public Pgn Dummy() {
-        List<Move> moves = new List<Move>();
-        moves.Add(new Move(new Square(SquareValue.E2), new Square(SquareValue.E4)));
-        moves.Add(new Move(new Square(SquareValue.C7), new Square(SquareValue.C6)));
-        moves.Add(new Move(new Square(SquareValue.D2), new Square(SquareValue.D4)));
-        moves.Add(new Move(new Square(SquareValue.D7), new Square(SquareValue.D5)));
-        
-        Pgn pgn = new Pgn();
-        pgn.SetMoves(moves.ToArray());
         return pgn;
     }
 

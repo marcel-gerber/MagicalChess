@@ -3,26 +3,34 @@ using System.Collections.Generic;
 
 public class Pgn {
     
-    private Dictionary<String, String> metadata;
-    private Move[] moves;
+    private readonly Dictionary<String, String> _metadata;
+    private readonly List<Move> _moves;
+    private int _position;
 
     public Pgn() {
-        
+        _metadata = new Dictionary<string, string>();
+        _moves = new List<Move>();
+        _position = 0;
     }
 
     public Dictionary<String, String> GetMetadata() {
-        return metadata;
-    }
-    
-    public void SetMetadata(Dictionary<String, String> data) {
-        this.metadata = data;
+        return _metadata;
     }
 
-    public Move[] GetMoves() {
-        return moves;
+    public void AddMetaData(String key, String value) {
+        _metadata[key] = value;
     }
 
-    public void SetMoves(Move[] moveArray) {
-        this.moves = moveArray;
+    public List<Move> GetMoves() {
+        return _moves;
+    }
+
+    public void AddMove(Move move) {
+        _moves.Add(move);
+    }
+
+    public Move GetNextMove() {
+        if (_position >= _moves.Count) return null;
+        return _moves[_position++];
     }
 }
