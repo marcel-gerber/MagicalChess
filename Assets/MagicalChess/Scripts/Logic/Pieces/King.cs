@@ -24,13 +24,22 @@ public class King : Piece {
             }
         }
 
+        AddCastlingMoves(ref pseudoLegalMoves, board, from);
+        return pseudoLegalMoves;
+    }
+
+    private void AddCastlingMoves(ref List<Move> pseudoLegalMoves, Board board, Square from) {
+        if (board.GetCastling().HasNoCastling()) return;
+
         CastlingValue[] castlings = Castling.GetCastlings(this.GetColor());
 
         foreach (CastlingValue castlingValue in castlings) {
             if (board.GetCastling().Has(castlingValue)) {
                 byte[] emptySquares = Castling.GetEmptySquares(castlingValue);
+                byte[] notAttackedSquares = Castling.GetNotAttackedSquares(castlingValue);
                 
                 if(!board.AreEmpty(emptySquares)) continue;
+                if(board.AreAttacked(notAttackedSquares)) continue;
                 
                 byte targetKindIndex = Castling.GetEndingKingIndex(castlingValue);
                 Square targetSquare = new Square(targetKindIndex);
@@ -38,8 +47,6 @@ public class King : Piece {
                 pseudoLegalMoves.Add(new Move(MoveType.CASTLING, from, targetSquare));
             }
         }
-        
-        return pseudoLegalMoves;
     }
 
     public override List<Square> GetAttackedSquares(Board board, Square from) {

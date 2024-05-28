@@ -107,6 +107,18 @@ public class Board {
 
         return true;
     }
+    
+    public bool AreAttacked(byte[] indexes) {
+        List<Square> attackedSquares = GetAttackedSquares(_sideToMove.GetOpposite());
+
+        foreach (Square square in attackedSquares) {
+            foreach (byte index in indexes) {
+                if (square.GetIndex() == index) return true;
+            }
+        }
+
+        return false;
+    }
 
     public bool IsKing(Square square) {
         return GetPiece(square) is King;
@@ -288,6 +300,18 @@ public class Board {
         }
         return attackedSquares;
     }
+    
+    private List<Square> GetAttackedSquares(Color color) {
+        List<Square> attackedSquares = new List<Square>();
+        
+        for (byte index = 0; index < 64; index++) {
+            Piece piece = GetPiece(index);
+            if(piece.GetColor() != color) continue;
+            
+            attackedSquares.AddRange(piece.GetAttackedSquares(this, new Square(index)));
+        }
+        return attackedSquares;
+    }
 
     public bool IsCheck() {
         Square kingSquare = GetKingSquare(_sideToMove.GetOpposite());
@@ -352,6 +376,17 @@ public class Board {
         return legalMoves;
     }
 
+    public List<Move> GetLegalMovesDebug() {
+        List<Move> legalMoves = new List<Move>();
+        legalMoves.AddRange(GetLegalMoves(PieceType.KING));
+        legalMoves.AddRange(GetLegalMoves(PieceType.PAWN));
+        legalMoves.AddRange(GetLegalMoves(PieceType.KNIGHT));
+        legalMoves.AddRange(GetLegalMoves(PieceType.BISHOP));
+        legalMoves.AddRange(GetLegalMoves(PieceType.ROOK));
+        legalMoves.AddRange(GetLegalMoves(PieceType.QUEEN));
+        
+        return legalMoves;
+    }
 
     public void SetFen(String fen) {
         String[] split = fen.Split(' ');

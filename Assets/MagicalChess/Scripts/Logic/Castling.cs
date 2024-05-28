@@ -15,11 +15,19 @@ public class Castling {
     private static readonly CastlingValue[] BlackCastlings = { CastlingValue.BLACK_00, CastlingValue.BLACK_000 };
     private static readonly CastlingValue[] WhiteCastlings = { CastlingValue.WHITE_00, CastlingValue.WHITE_000 };
 
+    // Squares that have to be empty
     private static readonly byte[] Black00EmptySquares = { 61, 62 };
     private static readonly byte[] Black000EmptySquares = { 57, 58, 59 };
     
     private static readonly byte[] White00EmptySquares = { 5, 6 };
     private static readonly byte[] White000EmptySquares = { 1, 2, 3 };
+    
+    // Squares that are not allowed to be attacked
+    private static readonly byte[] Black00NotAttacked = { 61, 62 };
+    private static readonly byte[] Black000NotAttacked = { 58, 59 };
+    
+    private static readonly byte[] White00NotAttacked = { 5, 6 };
+    private static readonly byte[] White000NotAttacked = { 2, 3 };
 
     public Castling() {
         _castlingRights = (byte) CastlingValue.NO_CASTLING;
@@ -66,6 +74,10 @@ public class Castling {
             if (Has(castlingValue)) return true;
         }
         return false;
+    }
+
+    public bool HasNoCastling() {
+        return _castlingRights == (byte) CastlingValue.NO_CASTLING;
     }
 
     public static CastlingValue[] GetCastlings(Color color) {
@@ -172,5 +184,22 @@ public class Castling {
                 return null;
         }
     }
+    
+    // Diese Felder dürfen nicht vom Gegner attackiert werden
+    public static byte[] GetNotAttackedSquares(CastlingValue castlingValue) {
+        switch (castlingValue) {
+            case CastlingValue.BLACK_00:
+                return Black00NotAttacked;
+            case CastlingValue.BLACK_000:
+                return Black000NotAttacked;
+            case CastlingValue.WHITE_00:
+                return White00NotAttacked;
+            case CastlingValue.WHITE_000:
+                return White000NotAttacked;
+            default:
+                return null;
+        }
+    }
+
 
 }
