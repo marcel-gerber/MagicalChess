@@ -2,140 +2,144 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 
-public class MoveFigure : MonoBehaviour
-{
-
+public class MoveFigure : MonoBehaviour {
+    
     public GameObject chessBoard;
     public GameObject blackFigures;
     public GameObject whiteFigures;
     public GameObject positions;
 
     private Pgn pgn;
-    private int moveSize;
-    private int currentMove;
-    
-    void Start()
-    {
+
+    private bool isMoving;
+    private GameObject nearestFigure;
+    private Transform planeFrom;
+    private Transform planeTo;
+
+    void Start() {
         Parser parser = Parser.Instance();
         pgn = parser.Parse(Path.GetFullPath("Assets/MagicalChess/Pgn/game.pgn"));
-        moveSize = pgn.GetMoves().Count;
-        currentMove = 0;
+        isMoving = false;
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
+        if (!isMoving) return;
         
+        float delta = Time.deltaTime;
+        nearestFigure.transform.position =
+            Vector3.MoveTowards(nearestFigure.transform.position, planeTo.transform.position, delta);
+
+        if (nearestFigure.transform.position == planeTo.position) {
+            isMoving = false;
+        }
     }
 
-    public void onClick()
-    {
+    public void onClick() {
         //chessBoard.GetComponent<MoveChessFigures>().moveFigures();
         Debug.Log("Clicked Button");
-        
-        if (currentMove < moveSize)
-        {
-            Move current = pgn.GetMoves()[currentMove];
-            Debug.Log("NEW MOVE: " + current.GetFrom().GetValue() + " --> " + current.GetTo().GetValue());
-            currentMove++;
-            String positionFrom = current.GetFrom().GetValue().ToString().ToLower();
-            String positionTo = current.GetTo().GetValue().ToString().ToLower();
-            GameObject nearestFigure = null;
-            
-            Transform currentPlane = positions.transform.Find(positionFrom);
-            if (currentPlane != null)
-            {
-                nearestFigure = searchNearestFigure(currentPlane.transform.position);
-                if (nearestFigure != null)
-                {
-                    //nearestFigure.transform.position += new Vector3(0, 2, 0);
-                    Debug.Log("Found nearest gameObject: " + nearestFigure.name);
-                }
-                currentPlane.transform.position += new Vector3(0, 0.1f, 0);
-                
-                MeshRenderer meshRenderer = currentPlane.GetComponent<MeshRenderer>();
-                if (meshRenderer != null)
-                {
-                    meshRenderer.material.color = Color.blue;
-                } 
-                else
-                {
-                    Debug.LogWarning("no meshRenderer.");
-                }
-            } 
-            else
-            {
-                Debug.LogWarning("no child object.");
-            }
-            
-            Transform currentPlaneTo = positions.transform.Find(positionTo);
-            if (currentPlaneTo != null)
-            {
-                if (nearestFigure != null)
-                {
-                    nearestFigure.transform.position = currentPlaneTo.transform.position;
-                    Debug.Log("moved gameObject: " + nearestFigure.name);
-                }
-                currentPlaneTo.transform.position += new Vector3(0, 0.1f, 0);
-                MeshRenderer meshRenderer = currentPlaneTo.GetComponent<MeshRenderer>();
-                if (meshRenderer != null)
-                {
-                    meshRenderer.material.color = Color.red;
-                } 
-                else
-                {
-                    Debug.LogWarning("no meshRenderer.");
-                }
-            } 
-            else
-            {
-                Debug.LogWarning("no child object.");
-            }
+
+        if (isMoving) {
+            Debug.LogWarning("figure currently moving. please wait");
+            return;
         }
-        else
-        {
-            Debug.LogWarning("no moves left.");  
+
+        Move next = pgn.GetNextMove();
+
+        if (next == null) {
+            Debug.LogWarning("no moves left.");
+            return;
         }
+
+        Debug.Log("NEW MOVE: " + next.GetFrom().GetValue() + " --> " + next.GetTo().GetValue());
+        String positionFrom = next.GetFrom().GetValue().ToString().ToLower();
+        String positionTo = next.GetTo().GetValue().ToString().ToLower();
+
+        planeFrom = positions.transform.Find(positionFrom);
+
+        if (planeFrom == null) {
+            Debug.LogWarning("no child object.");
+            return;
+        }
+
+        nearestFigure = searchNearestFigure(planeFrom.transform.position);
+
+        if (nearestFigure == null) {
+            Debug.LogWarning("no nearest figure found.");
+            return;
+        }
+
+        Debug.Log("Found nearest gameObject: " + nearestFigure.name);
+        // planeFrom.transform.position += new Vector3(0, 0.1f, 0);
+
+        // MeshRenderer meshRenderer = currentPlane.GetComponent<MeshRenderer>();
+        // if (meshRenderer != null)
+        // {
+        //     meshRenderer.material.color = Color.blue;
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("no meshRenderer.");
+        // }
+
+        planeTo = positions.transform.Find(positionTo);
+
+        if (planeTo == null) {
+            Debug.LogWarning("no child object.");
+            return;
+        }
+
+        isMoving = true;
+
+        // nearestFigure.transform.position = planeTo.transform.position;
+        Debug.Log("moved gameObject: " + nearestFigure.name);
+
+        // planeTo.transform.position += new Vector3(0, 0.1f, 0);
+
+        // MeshRenderer meshRenderer = currentPlaneTo.GetComponent<MeshRenderer>();
+        // if (meshRenderer != null)
+        // {
+        //     meshRenderer.material.color = Color.red;
+        // } 
+        // else
+        // {
+        //     Debug.LogWarning("no meshRenderer.");
+        // }
     }
 
-    private GameObject searchNearestFigure(Vector3 currentPosition)
-    {
-        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
+    private GameObject searchNearestFigure(Vector3 currentPosition) {
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
         float closest = 1000;
         GameObject closestObject = null;
-        
-        for (int i = 0; i < allObjects.Length; i++)
-        {
+
+        for (int i = 0; i < allObjects.Length; i++) {
             GameObject currentObject = allObjects[i];
             //PrimitiveType type = meshFilter.GetComponent<PrimitiveType>();
             //MeshRenderer meshRenderer = allObjects[i].GetComponent<MeshRenderer>();
             MeshFilter meshFilter = currentObject.GetComponent<MeshFilter>();
-            if (meshFilter != null)
-            {
+            if (meshFilter != null) {
                 Mesh mesh = meshFilter.sharedMesh;
-                if (mesh != null && mesh.name == "Plane")
-                {
+                if (mesh != null && mesh.name == "Plane") {
                     continue;
                 }
             }
 
-            if (currentObject.name == "Pferd" || currentObject.name == "Directional Light")
-            {
+            if (currentObject.name == "Pferd" || currentObject.name == "Directional Light") {
                 continue;
             }
-            
-            float dist = Vector3.Distance(allObjects[ i ].transform.position, currentPosition);
-            if (dist < closest)
-            {
+
+            float dist = Vector3.Distance(allObjects[i].transform.position, currentPosition);
+            if (dist < closest) {
                 closest = dist;
-                closestObject = allObjects[ i ];
+                closestObject = allObjects[i];
             }
         }
+
         return closestObject;
     }
-    
 }
