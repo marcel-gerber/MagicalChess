@@ -13,6 +13,7 @@ public class Test : MonoBehaviour {
         Move move;
         while ((move = pgn.GetNextMove()) != null) {
             Debug.Log(move.GetFrom().GetValue() + " " + move.GetTo().GetValue());
+            
         }
 
         // Board board = new Board();
