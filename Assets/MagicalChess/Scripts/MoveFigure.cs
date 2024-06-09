@@ -41,7 +41,6 @@ public class MoveFigure : MonoBehaviour {
     }
 
     public void onClick() {
-        //chessBoard.GetComponent<MoveChessFigures>().moveFigures();
         Debug.Log("Clicked Button");
 
         if (isMoving) {
@@ -75,17 +74,6 @@ public class MoveFigure : MonoBehaviour {
         }
 
         Debug.Log("Found nearest gameObject: " + nearestFigure.name);
-        // planeFrom.transform.position += new Vector3(0, 0.1f, 0);
-
-        // MeshRenderer meshRenderer = currentPlane.GetComponent<MeshRenderer>();
-        // if (meshRenderer != null)
-        // {
-        //     meshRenderer.material.color = Color.blue;
-        // }
-        // else
-        // {
-        //     Debug.LogWarning("no meshRenderer.");
-        // }
 
         planeTo = positions.transform.Find(positionTo);
 
@@ -96,20 +84,7 @@ public class MoveFigure : MonoBehaviour {
 
         isMoving = true;
 
-        // nearestFigure.transform.position = planeTo.transform.position;
         Debug.Log("moved gameObject: " + nearestFigure.name);
-
-        // planeTo.transform.position += new Vector3(0, 0.1f, 0);
-
-        // MeshRenderer meshRenderer = currentPlaneTo.GetComponent<MeshRenderer>();
-        // if (meshRenderer != null)
-        // {
-        //     meshRenderer.material.color = Color.red;
-        // } 
-        // else
-        // {
-        //     Debug.LogWarning("no meshRenderer.");
-        // }
     }
 
     private GameObject searchNearestFigure(Vector3 currentPosition) {
