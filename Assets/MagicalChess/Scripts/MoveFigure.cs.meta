@@ -3,7 +3,12 @@ guid: cf5b9121af7f74e4ca40a03269531b77
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - fracturedWhitePawn: {instanceID: 0}
+  - chessBoard: {instanceID: 0}
+  - blackFigures: {instanceID: 0}
+  - whiteFigures: {instanceID: 0}
+  - positions: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

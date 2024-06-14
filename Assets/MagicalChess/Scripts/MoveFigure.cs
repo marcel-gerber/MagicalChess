@@ -6,18 +6,34 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using Color = Chess.Color;
+using Random = UnityEngine.Random;
 
 public class MoveFigure : MonoBehaviour {
+
+    // Fractured Objects
+    [SerializeField] private GameObject fracturedWhitePawn;
+    [SerializeField] private GameObject fracturedWhiteKnight;
+    [SerializeField] private GameObject fracturedWhiteBishop;
+    [SerializeField] private GameObject fracturedWhiteRook;
+    [SerializeField] private GameObject fracturedWhiteQueen;
     
-    public GameObject chessBoard;
-    public GameObject blackFigures;
-    public GameObject whiteFigures;
+    [SerializeField] private GameObject fracturedBlackPawn;
+    [SerializeField] private GameObject fracturedBlackKnight;
+    [SerializeField] private GameObject fracturedBlackBishop;
+    [SerializeField] private GameObject fracturedBlackRook;
+    [SerializeField] private GameObject fracturedBlackQueen;
+    
+    // public GameObject chessBoard;
+    // public GameObject blackFigures;
+    // public GameObject whiteFigures;
     public GameObject positions;
 
     private Pgn pgn;
 
     private bool isMoving;
-    private GameObject nearestFigure;
+    private GameObject movingFigure;
+    private GameObject capturedFigure;
     private Transform planeFrom;
     private Transform planeTo;
 
@@ -32,11 +48,27 @@ public class MoveFigure : MonoBehaviour {
         if (!isMoving) return;
         
         float delta = Time.deltaTime;
-        nearestFigure.transform.position =
-            Vector3.MoveTowards(nearestFigure.transform.position, planeTo.transform.position, delta);
+        movingFigure.transform.position =
+            Vector3.MoveTowards(movingFigure.transform.position, planeTo.transform.position, delta);
 
-        if (nearestFigure.transform.position == planeTo.position) {
+        if (movingFigure.transform.position == planeTo.position) {
             isMoving = false;
+            
+            if(capturedFigure == null) return;
+
+            // Figur explodieren lassen
+            GameObject fracturedFigure = GetFracturedObject(capturedFigure);
+            
+            // Destroy(capturedFigure);
+            capturedFigure.SetActive(false);
+            GameObject fractured = Instantiate(fracturedFigure, capturedFigure.transform.position, Quaternion.identity);
+
+            foreach (Transform transform in fractured.transform) {
+                Rigidbody rigidbody = transform.GetComponent<Rigidbody>();
+                
+                rigidbody.AddExplosionForce(Random.Range(10, 10), capturedFigure.transform.position, 10);
+            }
+            
         }
     }
 
@@ -48,16 +80,18 @@ public class MoveFigure : MonoBehaviour {
             return;
         }
 
-        Move next = pgn.GetNextMove();
+        Move nextMove = pgn.GetNextMove();
+        movingFigure = null;
+        capturedFigure = null;
 
-        if (next == null) {
+        if (nextMove == null) {
             Debug.LogWarning("no moves left.");
             return;
         }
 
-        Debug.Log("NEW MOVE: " + next.GetFrom().GetValue() + " --> " + next.GetTo().GetValue());
-        String positionFrom = next.GetFrom().GetValue().ToString().ToLower();
-        String positionTo = next.GetTo().GetValue().ToString().ToLower();
+        Debug.Log("NEW MOVE: " + nextMove.GetFrom().GetValue() + " --> " + nextMove.GetTo().GetValue());
+        String positionFrom = nextMove.GetFrom().GetValue().ToString().ToLower();
+        String positionTo = nextMove.GetTo().GetValue().ToString().ToLower();
 
         planeFrom = positions.transform.Find(positionFrom);
 
@@ -66,14 +100,14 @@ public class MoveFigure : MonoBehaviour {
             return;
         }
 
-        nearestFigure = searchNearestFigure(planeFrom.transform.position);
+        movingFigure = searchNearestFigure(planeFrom.transform.position);
 
-        if (nearestFigure == null) {
+        if (movingFigure == null) {
             Debug.LogWarning("no nearest figure found.");
             return;
         }
 
-        Debug.Log("Found nearest gameObject: " + nearestFigure.name);
+        Debug.Log("Found nearest gameObject: " + movingFigure.name);
 
         planeTo = positions.transform.Find(positionTo);
 
@@ -82,9 +116,13 @@ public class MoveFigure : MonoBehaviour {
             return;
         }
 
+        if (nextMove.GetMoveType() == MoveType.CAPTURE) {
+            capturedFigure = searchNearestFigure(planeTo.transform.position);
+        }
+
         isMoving = true;
 
-        Debug.Log("moved gameObject: " + nearestFigure.name);
+        Debug.Log("moved gameObject: " + movingFigure.name);
     }
 
     private GameObject searchNearestFigure(Vector3 currentPosition) {
@@ -116,5 +154,47 @@ public class MoveFigure : MonoBehaviour {
         }
 
         return closestObject;
+    }
+
+    private GameObject GetFracturedObject(GameObject figure) {
+        FigureInfo figureInfo = figure.GetComponent<FigureInfo>();
+
+        if (figureInfo == null) return null;
+        Chess.Color color = figureInfo.GetColor();
+        
+        switch (figureInfo.GetPieceType()) {
+            case PieceType.PAWN:
+                if (color == Color.WHITE) {
+                    return fracturedWhitePawn;
+                }
+                return fracturedBlackPawn;
+            
+            case PieceType.KNIGHT:
+                if (color == Color.WHITE) {
+                    return fracturedWhiteKnight;
+                }
+                return fracturedBlackKnight;
+            
+            case PieceType.BISHOP:
+                if (color == Color.WHITE) {
+                    return fracturedWhiteBishop;
+                }
+                return fracturedBlackBishop;
+            
+            case PieceType.ROOK:
+                if (color == Color.WHITE) {
+                    return fracturedWhiteRook;
+                }
+                return fracturedBlackRook;
+            
+            case PieceType.QUEEN:
+                if (color == Color.WHITE) {
+                    return fracturedWhiteQueen;
+                }
+                return fracturedBlackQueen;
+            
+            default:
+                return null;
+        }
     }
 }

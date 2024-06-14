@@ -123,7 +123,7 @@ public class Parser {
                     Char additionalInfo = sMove[0];
                     Square to = new Square(sMove.Substring(2));
                     Square from = GetFromByToWithAdditionalInfo(PieceType.PAWN, to, additionalInfo);
-                    return new Move(from, to);
+                    return new Move(MoveType.CAPTURE, from, to);
                 }
 
                 // Capture move -> Nxe4
@@ -132,7 +132,7 @@ public class Parser {
                     Square to = new Square(sMove.Substring(2));
                     
                     Square from = GetFromByTo(piece.GetPieceType(), to);
-                    return new Move(from, to);
+                    return new Move(MoveType.CAPTURE, from, to);
                 }
             }
 
