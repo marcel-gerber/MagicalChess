@@ -68,7 +68,6 @@ public class MoveFigure : MonoBehaviour {
                 
                 rigidbody.AddExplosionForce(Random.Range(10, 10), capturedFigure.transform.position, 10);
             }
-            
         }
     }
 
@@ -145,6 +144,8 @@ public class MoveFigure : MonoBehaviour {
             if (currentObject.name == "Pferd" || currentObject.name == "Directional Light") {
                 continue;
             }
+            
+            if(currentObject.GetComponent<FigureInfo>() == null) continue;
 
             float dist = Vector3.Distance(allObjects[i].transform.position, currentPosition);
             if (dist < closest) {
