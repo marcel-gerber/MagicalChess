@@ -46,14 +46,9 @@ public class MoveFigure : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (Input.GetKeyDown(KeyCode.F)) {
-            onClick();
-            return;
-        }
-        
         if (!isMoving) return;
         
-        float delta = Time.deltaTime * 2;
+        float delta = Time.deltaTime;
 
         if (movingFigure != null) {
             movingFigure.transform.position =
