@@ -24,9 +24,6 @@ public class MoveFigure : MonoBehaviour {
     [SerializeField] private GameObject fracturedBlackRook;
     [SerializeField] private GameObject fracturedBlackQueen;
     
-    // public GameObject chessBoard;
-    // public GameObject blackFigures;
-    // public GameObject whiteFigures;
     public GameObject positions;
 
     private Pgn pgn;
@@ -36,6 +33,10 @@ public class MoveFigure : MonoBehaviour {
     private GameObject capturedFigure;
     private Transform planeFrom;
     private Transform planeTo;
+    
+    // Notwendig für Rochade
+    private GameObject castlingRook;
+    private Transform castlingTo;
 
     void Start() {
         Parser parser = Parser.Instance();
@@ -45,21 +46,42 @@ public class MoveFigure : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F)) {
+            onClick();
+            return;
+        }
+        
         if (!isMoving) return;
         
-        float delta = Time.deltaTime;
-        movingFigure.transform.position =
-            Vector3.MoveTowards(movingFigure.transform.position, planeTo.transform.position, delta);
+        float delta = Time.deltaTime * 2;
+
+        if (movingFigure != null) {
+            movingFigure.transform.position =
+                Vector3.MoveTowards(movingFigure.transform.position, planeTo.transform.position, delta);
+        }
+        else {
+            castlingRook.transform.position =
+                Vector3.MoveTowards(castlingRook.transform.position, castlingTo.transform.position, delta);
+
+            if (castlingRook.transform.position == castlingTo.position) {
+                isMoving = false;
+            }
+            return;
+        }
 
         if (movingFigure.transform.position == planeTo.position) {
-            isMoving = false;
+            if (castlingRook != null) {
+                movingFigure = null;
+            }
+            else {
+                isMoving = false;
+            }
             
             if(capturedFigure == null) return;
 
             // Figur explodieren lassen
             GameObject fracturedFigure = GetFracturedObject(capturedFigure);
             
-            // Destroy(capturedFigure);
             capturedFigure.SetActive(false);
             GameObject fractured = Instantiate(fracturedFigure, capturedFigure.transform.position, Quaternion.identity);
 
@@ -82,6 +104,8 @@ public class MoveFigure : MonoBehaviour {
         Move nextMove = pgn.GetNextMove();
         movingFigure = null;
         capturedFigure = null;
+        castlingRook = null;
+        castlingTo = null;
 
         if (nextMove == null) {
             Debug.LogWarning("no moves left.");
@@ -117,6 +141,20 @@ public class MoveFigure : MonoBehaviour {
 
         if (nextMove.GetMoveType() == MoveType.CAPTURE) {
             capturedFigure = searchNearestFigure(planeTo.transform.position);
+        } else if (nextMove.GetMoveType() == MoveType.CASTLING) {
+            // Art der Rochade bestimmen und Feld des Turms holen
+            CastlingValue castlingValue = Castling.GetFromKingIndex(nextMove.GetTo().GetIndex());
+            byte rookFromIndex = Castling.GetStartingRookIndex(castlingValue);
+            Square rookFromSquare = new Square(rookFromIndex);
+            
+            // Plane, auf der sich der Turm befindet holen und dann den Turm holen
+            Transform planeOfRook = positions.transform.Find(rookFromSquare.GetValue().ToString().ToLower());
+            castlingRook = searchNearestFigure(planeOfRook.transform.position);
+            
+            // Plane, zu der sich der Turm bewegt holen
+            byte rookToIndex = Castling.GetEndingRookIndex(castlingValue);
+            Square rookToSquare = new Square(rookToIndex);
+            castlingTo = positions.transform.Find(rookToSquare.GetValue().ToString().ToLower());
         }
 
         isMoving = true;
