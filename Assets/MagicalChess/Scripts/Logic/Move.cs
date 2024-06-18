@@ -1,5 +1,6 @@
 ﻿public enum MoveType : byte {
     NORMAL,
+    CAPTURE,
     PROMOTION,
     ENPASSANT,
     CASTLING
