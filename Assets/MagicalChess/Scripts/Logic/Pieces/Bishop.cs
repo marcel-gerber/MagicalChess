@@ -1,7 +1,9 @@
-using System;
 using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert einen Läufer im Schachspiel.
+/// </summary>
 public class Bishop : Piece {
 
     public Bishop(Color color) : base(color) {
@@ -20,10 +22,6 @@ public class Bishop : Piece {
 
     public override List<Square> GetAttackedSquares(Board board, Square from) {
         return base.GetBishopAttacks(board, from, square => false);
-    }
-
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'B' : 'b';
     }
 
     public override PieceType GetPieceType() {

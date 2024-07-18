@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
 using Color = Chess.Color;
 using Random = UnityEngine.Random;
@@ -28,13 +23,14 @@ public class MoveFigure : MonoBehaviour {
 
     private Pgn pgn;
 
+    // Notwendige Objekte für das Bewegen der Figur
     private bool isMoving;
     private GameObject movingFigure;
     private GameObject capturedFigure;
     private Transform planeFrom;
     private Transform planeTo;
     
-    // Notwendig für Rochade
+    // Notwendige Objekte für die Rochade (Bewegender Turm und zu welchem Feld er sich bewegt)
     private GameObject castlingRook;
     private Transform castlingTo;
 
@@ -44,7 +40,10 @@ public class MoveFigure : MonoBehaviour {
         isMoving = false;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Wird bei jedem Frame ausgeführt. Sobald 'isMoving' true ist, wird die Figur 'movingFigure' zum Feld
+    /// 'planeTo' bewegt
+    /// </summary>
     void Update() {
         if (!isMoving) return;
         
@@ -88,6 +87,10 @@ public class MoveFigure : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Holt den nächsten Zug aus dem PGN-Objekt und lässt die Figur bewegen.
+    /// Wird beim Betätigen des Buttons 'Nächster Zug' ausgeführt
+    /// </summary>
     public void onClick() {
         Debug.Log("Clicked Button");
 
@@ -157,6 +160,11 @@ public class MoveFigure : MonoBehaviour {
         Debug.Log("moved gameObject: " + movingFigure.name);
     }
 
+    /// <summary>
+    /// Gibt die Figur, welcher der 'currentPosition' am nächsten ist, zurück
+    /// </summary>
+    /// <param name="currentPosition"></param>
+    /// <returns>GameObject</returns>
     private GameObject searchNearestFigure(Vector3 currentPosition) {
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
         float closest = 1000;
@@ -164,8 +172,6 @@ public class MoveFigure : MonoBehaviour {
 
         for (int i = 0; i < allObjects.Length; i++) {
             GameObject currentObject = allObjects[i];
-            //PrimitiveType type = meshFilter.GetComponent<PrimitiveType>();
-            //MeshRenderer meshRenderer = allObjects[i].GetComponent<MeshRenderer>();
             MeshFilter meshFilter = currentObject.GetComponent<MeshFilter>();
             if (meshFilter != null) {
                 Mesh mesh = meshFilter.sharedMesh;
@@ -190,6 +196,11 @@ public class MoveFigure : MonoBehaviour {
         return closestObject;
     }
 
+    /// <summary>
+    /// Gibt das Fractured Object der Figur 'figure' zurück
+    /// </summary>
+    /// <param name="figure"></param>
+    /// <returns>GameObject</returns>
     private GameObject GetFracturedObject(GameObject figure) {
         FigureInfo figureInfo = figure.GetComponent<FigureInfo>();
 

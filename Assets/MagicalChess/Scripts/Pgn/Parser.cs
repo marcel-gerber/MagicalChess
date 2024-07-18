@@ -19,12 +19,23 @@ public class Parser {
         return _instance ?? new Parser();
     }
     
+    /// <summary>
+    /// Entfernt geschweifte Klammern und deren Inhalt im String 'input'.
+    /// Notwendig zum Entfernen von Kommentaren in PGN-Dateien.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns>String</returns>
     private String RemoveCurlyBracesContent(String input) {
         String pattern = @"\{.*?\}";
         String result = Regex.Replace(input, pattern, "").Trim();
         return result;
     }
 
+    /// <summary>
+    /// Schnittstelle des Parsers. Erwartet im 'file' eine Datei im PGN-Format. Liefert ein Pgn-Objekt.
+    /// </summary>
+    /// <param name="file">PGN-Datei</param>
+    /// <returns>Pgn</returns>
     public Pgn Parse(String file) {
         if (!File.Exists(file)) {
             Debug.Log("File does not exist");
@@ -82,6 +93,14 @@ public class Parser {
         return pgn;
     }
 
+    /// <summary>
+    /// Erwartet einen String 'sMove' in der verkürzten algebraischen Notation (Schachnotation).
+    /// Gibt den Zug als Move-Objekt zurück. <br /><br />
+    /// <b>HINWEIS: Es sind nicht alle Sonderfälle implementiert!</b>
+    /// </summary>
+    /// <param name="sMove">Zug in verkürzter algebraischer Notation</param>
+    /// <returns>Move</returns>
+    /// <exception cref="Exception"></exception>
     private Move ParseMove(String sMove) {
         if (IsCastling(sMove)) {
             return GetCastling(sMove);
@@ -157,6 +176,12 @@ public class Parser {
         throw new Exception("Unknown Move: " + sMove);
     }
 
+    /// <summary>
+    /// Liefert das Ausgangsfeld auf Basis des Zielfeldes 'to' und der Typ der Figur 'pieceType'
+    /// </summary>
+    /// <param name="pieceType">Typ der Figur</param>
+    /// <param name="to">Zielfeld</param>
+    /// <returns>Square</returns>
     private Square GetFromByTo(PieceType pieceType, Square to) {
         List<Move> legalMoves = _board.GetLegalMoves(pieceType);
         
@@ -169,6 +194,15 @@ public class Parser {
         return new Square(SquareValue.NONE);
     }
     
+    /// <summary>
+    /// Wenn mehrere Figuren des gleichen Types auf dem gleichen Feld landen können, müssen mehr Informationen
+    /// über das Ausgangsfeld vorliegen. Dies wird durch das zusätzliche Argument 'additional' realisiert.
+    /// 'additional' kann entweder eine Zahl (Rank) oder ein Buchstabe (File) sein.
+    /// </summary>
+    /// <param name="pieceType">Typ der Figur</param>
+    /// <param name="to">Zielfeld</param>
+    /// <param name="additional">Zusätzliche Information über den Zug</param>
+    /// <returns></returns>
     private Square GetFromByToWithAdditionalInfo(PieceType pieceType, Square to, char additional) {
         List<Move> legalMoves = _board.GetLegalMoves(pieceType);
         
@@ -204,6 +238,11 @@ public class Parser {
         }
     }
 
+    /// <summary>
+    /// Liefert ein Move-Objekt mit dem Zug für die Rochade basierend auf dem String 'move'
+    /// </summary>
+    /// <param name="move">Rochaden-Zug in Schachnotation ("0-0" oder "0-0-0")</param>
+    /// <returns>Move</returns>
     private Move GetCastling(String move) {
         switch (move) {
             case "O-O":
