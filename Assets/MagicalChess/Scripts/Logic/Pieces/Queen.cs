@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert eine Dame im Schachspiel.
+/// </summary>
 public class Queen : Piece {
 
     public Queen(Color color) : base(color) {
@@ -25,10 +28,6 @@ public class Queen : Piece {
         List<Square> attackedSquares = base.GetRookAttacks(board, from, square => false);
         attackedSquares.AddRange(base.GetBishopAttacks(board, from, square => false));
         return attackedSquares;
-    }
-    
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'Q' : 'q';
     }
 
     public override PieceType GetPieceType() {

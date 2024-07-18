@@ -1,4 +1,8 @@
 ﻿namespace Chess {
+    
+    /// <summary>
+    /// Repräsentiert die beiden Farben Schwarz und Weiß im Schachspiel. 
+    /// </summary>
     public enum Color : byte {
         WHITE,
         BLACK,

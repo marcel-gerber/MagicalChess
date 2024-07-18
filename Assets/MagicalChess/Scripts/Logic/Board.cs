@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Chess;
 
+/// <summary>
+/// Speichert wichtige Informationen über den Zustand des Schachbretts. Dazu zählen die Rechte der Rochade,
+/// das en passant Feld und eine mögliche geschlagene Figur.
+/// </summary>
 public class StateInfo {
 
     private readonly Castling _castling;
@@ -28,6 +31,9 @@ public class StateInfo {
     }
 }
 
+/// <summary>
+/// Repräsentiert ein Schachbrett.
+/// </summary>
 public class Board {
 
     private readonly Piece[] _pieces;
@@ -35,6 +41,7 @@ public class Board {
     private Color _sideToMove;
     private Square _enPassantSquare;
 
+    // Stack zum Ablegen aller vorherigen Zustände
     private readonly Stack<StateInfo> _prevStates;
 
     public Board() {
@@ -146,6 +153,10 @@ public class Board {
                (neighborWest is Pawn && neighborWest.GetColor() != piece.GetColor());
     }
 
+    /// <summary>
+    /// Methode zum Spielen eines Zuges.
+    /// </summary>
+    /// <param name="move">Zu spielender Zug</param>
     public void MakeMove(Move move) {
         Square from = move.GetFrom();
         Square to = move.GetTo();
@@ -228,6 +239,10 @@ public class Board {
         _sideToMove = _sideToMove.GetOpposite();
     }
 
+    /// <summary>
+    /// Methode, zum Zurücknehmen eines Zuges.
+    /// </summary>
+    /// <param name="move">Zurückzunehmender Zug</param>
     public void UnmakeMove(Move move) {
         StateInfo stateInfo = _prevStates.Pop();
 
@@ -289,6 +304,10 @@ public class Board {
         }
     }
 
+    /// <summary>
+    /// Liefert eine Liste von Feldern, die vom aktuellen Gegner attackiert werden.
+    /// </summary>
+    /// <returns>List von Feldern</returns>
     public List<Square> GetAttackedSquares() {
         List<Square> attackedSquares = new List<Square>();
         
@@ -301,6 +320,11 @@ public class Board {
         return attackedSquares;
     }
     
+    /// <summary>
+    /// Liefert eine Liste von Feldern, die von der Farbe 'color' attackiert werden.
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns>List von Feldern</returns>
     private List<Square> GetAttackedSquares(Color color) {
         List<Square> attackedSquares = new List<Square>();
         
@@ -313,6 +337,10 @@ public class Board {
         return attackedSquares;
     }
 
+    /// <summary>
+    /// Funktion zum Prüfen, ob ein Schach vorliegt (ob der gegnerische König attackiert wird).
+    /// </summary>
+    /// <returns>bool</returns>
     public bool IsCheck() {
         Square kingSquare = GetKingSquare(_sideToMove.GetOpposite());
 
@@ -322,6 +350,10 @@ public class Board {
         return false;
     }
 
+    /// <summary>
+    /// Liefert eine Liste von <b>pseudo legalen</b> Zügen.
+    /// </summary>
+    /// <returns>Liste von Zügen</returns>
     public List<Move> GetPseudoLegalMoves() {
         List<Move> pseudoLegalMoves = new List<Move>();
         
@@ -334,6 +366,11 @@ public class Board {
         return pseudoLegalMoves;
     }
     
+    /// <summary>
+    /// Liefert eine Liste von <b>pseudo legalen</b> Zügen eines bestimmen Figurtypen 'pieceType'.
+    /// </summary>
+    /// <param name="pieceType">Typ der Figur</param>
+    /// <returns>Liste von Zügen</returns>
     public List<Move> GetPseudoLegalMoves(PieceType pieceType) {
         List<Move> pseudoLegalMoves = new List<Move>();
         
@@ -346,6 +383,10 @@ public class Board {
         return pseudoLegalMoves;
     }
 
+    /// <summary>
+    /// Liefert eine Liste von <b>echt legalen</b> Zügen
+    /// </summary>
+    /// <returns>List von Zügen</returns>
     public List<Move> GetLegalMoves() {
         List<Move> pseudoLegalMoves = GetPseudoLegalMoves();
         List<Move> legalMoves = new List<Move>();
@@ -361,6 +402,11 @@ public class Board {
         return legalMoves;
     }
     
+    /// <summary>
+    /// Liefert eine Liste von <b>echt legalen</b> Zügen eines bestimmen Figurtypen 'pieceType'.
+    /// </summary>
+    /// <param name="pieceType">Typ der Figur</param>
+    /// <returns>List von Zügen</returns>
     public List<Move> GetLegalMoves(PieceType pieceType) {
         List<Move> pseudoLegalMoves = GetPseudoLegalMoves(pieceType);
         List<Move> legalMoves = new List<Move>();
@@ -376,18 +422,10 @@ public class Board {
         return legalMoves;
     }
 
-    public List<Move> GetLegalMovesDebug() {
-        List<Move> legalMoves = new List<Move>();
-        legalMoves.AddRange(GetLegalMoves(PieceType.KING));
-        legalMoves.AddRange(GetLegalMoves(PieceType.PAWN));
-        legalMoves.AddRange(GetLegalMoves(PieceType.KNIGHT));
-        legalMoves.AddRange(GetLegalMoves(PieceType.BISHOP));
-        legalMoves.AddRange(GetLegalMoves(PieceType.ROOK));
-        legalMoves.AddRange(GetLegalMoves(PieceType.QUEEN));
-        
-        return legalMoves;
-    }
-
+    /// <summary>
+    /// Methode zum Setzen des FEN-Strings eines Schachbretts.
+    /// </summary>
+    /// <param name="fen">FEN-String</param>
     public void SetFen(String fen) {
         String[] split = fen.Split(' ');
         String pieces = split[0];
@@ -437,27 +475,6 @@ public class Board {
                 _castling.Set(CastlingValue.BLACK_000);
             }
         }
-    }
-    
-    public String String() {
-        StringBuilder stringBuilder = new StringBuilder("\n---------------------------------\n");
-        byte index = 56;
-
-        for (byte i = 0; i < 8; i++) {
-            for (byte j = 0; j < 8; j++) {
-                stringBuilder.Append("| ");
-                stringBuilder.Append(GetPiece(index).GetChar());
-                stringBuilder.Append(" ");
-
-                index++;
-            }
-
-            stringBuilder.Append("|\n");
-            stringBuilder.Append("---------------------------------\n");
-            index -= 16;
-        }
-
-        return stringBuilder.ToString();
     }
     
     private void Init() {

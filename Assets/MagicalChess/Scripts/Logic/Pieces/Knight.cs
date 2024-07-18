@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert einen Springer im Schachspiel.
+/// </summary>
 public class Knight : Piece {
 
     private static readonly Direction[] LegalDirections = { Direction.KNIGHT_NORTH_NORTH_WEST, 
@@ -41,10 +44,6 @@ public class Knight : Piece {
             }
         }
         return attackedSquares;
-    }
-
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'N' : 'n';
     }
 
     public override PieceType GetPieceType() {

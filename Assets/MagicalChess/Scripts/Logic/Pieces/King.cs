@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert einen König im Schachspiel.
+/// </summary>
 public class King : Piece {
 
     private static readonly Direction[] LegalDirections = { Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, 
@@ -62,10 +65,6 @@ public class King : Piece {
             }
         }
         return attackedSquares;
-    }
-
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'K' : 'k';
     }
 
     public override PieceType GetPieceType() {

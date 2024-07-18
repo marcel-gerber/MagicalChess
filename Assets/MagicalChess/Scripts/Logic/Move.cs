@@ -6,6 +6,9 @@
     CASTLING
 }
 
+/// <summary>
+/// Repräsentiert einen Zug im Schachspiel.
+/// </summary>
 public class Move {
 
     private readonly MoveType _moveType;

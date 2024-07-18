@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert einen Bauer im Schachspiel.
+/// </summary>
 public class Pawn : Piece {
 
     private static readonly Direction[] WhiteAttacks = { Direction.NORTH_EAST, Direction.NORTH_WEST };
@@ -17,9 +20,10 @@ public class Pawn : Piece {
         Direction push = color == Color.WHITE ? Direction.NORTH : Direction.SOUTH;
         Square to = from + push;
 
+        // Single-Push und Double-Push
         if (board.IsEmpty(to)) {
             if (IsOnPromotionRank(color, to)) {
-                GetPromotionMoves(ref pseudoLegalMoves, from, to);
+                AddPromotionMoves(ref pseudoLegalMoves, from, to);
             }
             else {
                 pseudoLegalMoves.Add(new Move(from, to));
@@ -34,6 +38,7 @@ public class Pawn : Piece {
             }
         }
 
+        // Attacken nach links und rechts
         foreach (Direction attack in GetAttackDirections(color)) {
             to = from + attack;
             
@@ -46,7 +51,7 @@ public class Pawn : Piece {
 
             if (board.IsOpponent(to, this) && !board.IsKing(to)) {
                 if (IsOnPromotionRank(color, to)) {
-                    GetPromotionMoves(ref pseudoLegalMoves, from, to);
+                    AddPromotionMoves(ref pseudoLegalMoves, from, to);
                 }
                 else {
                     pseudoLegalMoves.Add(new Move(from, to));
@@ -72,15 +77,11 @@ public class Pawn : Piece {
         return attackedSquares;
     }
 
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'P' : 'p';
-    }
-
     public override PieceType GetPieceType() {
         return PieceType.PAWN;
     }
 
-    private static void GetPromotionMoves(ref List<Move> moves, Square from, Square to) {
+    private static void AddPromotionMoves(ref List<Move> moves, Square from, Square to) {
         moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.KNIGHT));
         moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.BISHOP));
         moves.Add(new Move(MoveType.PROMOTION, from, to, PieceType.ROOK));

@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Alle Figuren bekommen ein 'FigureInfo'-Objekt, damit man weiß, um welche Figur es sich konkret handelt 
+/// </summary>
 public class FigureInfo : MonoBehaviour {
 
     [SerializeField] private Chess.Color color;

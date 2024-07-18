@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Stellt eine leere Figur dar. Repräsentiert damit ein leeres Feld und verhindert lästige null-checks. 
+/// </summary>
 public class NullPiece : Piece {
 
     private static readonly List<Move> EmptyMoveList = new List<Move>();
@@ -21,10 +24,6 @@ public class NullPiece : Piece {
 
     public override List<Square> GetAttackedSquares(Board board, Square from) {
         return EmptySquareList;
-    }
-
-    public override char GetChar() {
-        return ' ';
     }
 
     public override PieceType GetPieceType() {

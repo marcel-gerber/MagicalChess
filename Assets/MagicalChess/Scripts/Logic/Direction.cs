@@ -1,4 +1,7 @@
-﻿// https://www.chessprogramming.org/Direction
+﻿/// <summary>
+/// Repräsentiert eine Richtung, um von einem Feld zu anderen Feldern zu gelangen.
+/// Quelle: https://www.chessprogramming.org/Direction
+/// </summary>
 public enum Direction : sbyte {
     // Ray Directions
     NORTH = 8,

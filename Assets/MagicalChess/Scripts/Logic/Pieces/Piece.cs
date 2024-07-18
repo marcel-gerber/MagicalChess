@@ -30,6 +30,10 @@ public static class PieceTypeExtension {
     }
 }
 
+/// <summary>
+/// Repräsentiert eine Figur im Schachspiel. Alle erbenden Klassen müssen die Funktionen GetPseudoLegalMoves,
+/// GetAttackedSquares und GetPieceType implementieren.
+/// </summary>
 public abstract class Piece {
     
     private readonly Color _color;
@@ -41,8 +45,6 @@ public abstract class Piece {
     public abstract List<Move> GetPseudoLegalMoves(Board board, Square from);
 
     public abstract List<Square> GetAttackedSquares(Board board, Square from);
-
-    public abstract char GetChar();
 
     public abstract PieceType GetPieceType();
 

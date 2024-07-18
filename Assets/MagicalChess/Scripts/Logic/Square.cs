@@ -12,6 +12,9 @@ public enum SquareValue : byte {
     NONE
 };
 
+/// <summary>
+/// Repräsentiert ein einzelnes Feld auf dem Schachbrett.
+/// </summary>
 public class Square {
     
     private SquareValue _value;
@@ -34,6 +37,11 @@ public class Square {
         _value = (SquareValue) index;
     }
 
+    /// <summary>
+    /// Konstruktor zum Erstellen von 'Square'-Objekten aus Strings.
+    /// </summary>
+    /// <param name="s">String</param>
+    /// <example>"d5"</example>
     public Square(String s) {
         if (s == "-") {
             _value = SquareValue.NONE;
@@ -44,6 +52,13 @@ public class Square {
         _value = (SquareValue) index;
     }
 
+    /// <summary>
+    /// Operator, um 'square' einer Direction addieren zu können.
+    /// </summary>
+    /// <param name="square">Feld</param>
+    /// <param name="direction">Richtung</param>
+    /// <returns>Square</returns>
+    /// <example>d5 + Direction.NORTH => d6</example>
     public static Square operator+(Square square, Direction direction) {
         byte targetIndex = (byte) (square.GetIndex() + direction.GetValue());
         Square targetSquare = new Square(targetIndex);

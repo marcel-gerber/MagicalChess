@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Repräsentiert eine PGN-Datei, bestehend aus Metadaten und Zügen.
+/// </summary>
 public class Pgn {
     
     private readonly Dictionary<String, String> _metadata;

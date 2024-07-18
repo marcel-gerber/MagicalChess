@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using Chess;
 
+/// <summary>
+/// Repräsentiert einen Turm im Schachspiel.
+/// </summary>
 public class Rook : Piece {
 
     public Rook(Color color) : base(color) {
@@ -19,10 +22,6 @@ public class Rook : Piece {
     
     public override List<Square> GetAttackedSquares(Board board, Square from) {
         return base.GetRookAttacks(board, from, square => false);
-    }
-    
-    public override char GetChar() {
-        return GetColor() == Color.WHITE ? 'R' : 'r';
     }
 
     public override PieceType GetPieceType() {

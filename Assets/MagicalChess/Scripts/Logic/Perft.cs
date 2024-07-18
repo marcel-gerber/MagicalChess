@@ -1,7 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Implementierung des Perft-Algorithmus zum Testen und Debuggen der Schachlogik.
+/// Quelle: https://www.chessprogramming.org/Perft
+/// </summary>
 public class Perft {
 
     private readonly Board _board;
